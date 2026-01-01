@@ -291,7 +291,7 @@
     <div id="cart-modal" class="modal">
         <div class="bg-white w-full max-w-sm mx-auto rounded-sm shadow-2xl modal-content-scroll">
             <div class="p-6 border-b sticky top-0 bg-white z-10 flex justify-between items-center">
-                <h2 class="text-lg font-black uppercase tracking-tighter italic">Order Summary</h2>
+                <h2 class="text-lg font-black uppercase tracking-tighter italic">Muhtasari wa Oda Yako</h2>
                 <button onclick="closePopup('cart-modal')" class="text-gray-400">✕</button>
             </div>
 
@@ -303,21 +303,23 @@
                     <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Delivery Details</p>
                     <input type="tel" id="cust-phone" placeholder="Phone (07xx xxx xxx)" 
                         class="w-full border p-3 rounded-sm text-sm focus:border-red-600 outline-none">
-                    <input type="text" id="cust-loc" placeholder="Shop Name & Location" 
+                    <input type="text" id="cust-loc" placeholder="Jina la duka maarufu" 
+                        class="w-full border p-3 rounded-sm text-sm focus:border-red-600 outline-none">
+                    <input type="text" id="cust-loc" placeholder="Mahali Unapatikana" 
                         class="w-full border p-3 rounded-sm text-sm focus:border-red-600 outline-none">
                 </div>
 
                 <div class="flex justify-between items-center mb-6">
-                    <span class="text-sm font-bold text-gray-500 uppercase">Total amount:</span>
+                    <span class="text-sm font-bold text-gray-500 uppercase">Jumla Kuu:</span>
                     <span id="cart-total" class="text-xl font-black text-red-600">Tsh 0</span>
                 </div>
 
                 <button onclick="sendWhatsApp()" class="w-full bg-green-600 text-white py-4 rounded-sm font-black uppercase tracking-widest text-xs shadow-lg active:scale-95 transition flex items-center justify-center gap-2">
-                    <span>Confirm via WhatsApp</span>
+                    <span>Thibitisha kwa WhatsApp</span>
                 </button>
                 
                 <button onclick="closePopup('cart-modal')" class="w-full text-center text-[10px] font-bold text-gray-400 uppercase mt-4 tracking-widest">
-                    Back to Catalog
+                    Rudi Kwenye Bidhaa
                 </button>
             </div>
         </div>
