@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simba Express | Duka lako, jukumu letu.</title>
+     <link rel="icon" type="image/png" href="/favicon/favicon.png">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; scroll-behavior: smooth; }
+        .hero-bg {
+            background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('https://images.unsplash.com/photo-1534452203293-494d7ddbf7e0?auto=format&fit=crop&w=1200&q=80');
+            background-size: cover; background-position: center;
+        }
+        .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 100; align-items: center; justify-content: center; padding: 1rem; }
+        .modal.active { display: flex; }
+        .category-tab.active { border-color: #dc2626; color: #dc2626; background-color: #fef2f2; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+    </style>
+</head>
+<body class="bg-white text-gray-900">
+
+    <nav class="flex justify-between items-center px-6 py-4 border-b sticky top-0 bg-white z-50">
+        <div class="flex items-center gap-2 cursor-pointer" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
+            <span class="text-red-600 text-2xl">🚚</span>
+            <span class="text-xl font-bold tracking-tighter uppercase">Simba <span class="text-red-600">Express</span></span>
+        </div>
+        <div class="space-x-4 text-[10px] font-bold text-blue-500 uppercase tracking-widest">
+            <button onclick="openPopup('about-modal')">KUHUSU</button> | 
+            <button onclick="openPopup('contact-modal')">MAWASILIANO</button>
+        </div>
+    </nav>
+
+    <header class="hero-bg h-80 flex flex-col items-center justify-center text-white text-center px-4">
+        <h1 class="text-4xl font-bold mb-2">Duka lako, jukumu letu.</h1>
+        <h2 class="text-2xl font-light mb-4 text-white italic">Mzigo Unafika Ndani ya Dakika 30 - 60</h2>
+        <div class="bg-white/10 backdrop-blur-sm px-6 py-2 rounded">
+            <p class="text-xl font-semibold">Usafiri ni Tsh 5,000 tu Popote Dar</p>
+        </div>
+    </header>
+
+    <div id="about-modal" class="modal" onclick="closePopup('about-modal')">
+        <div class="bg-white p-8 max-w-md rounded-sm shadow-2xl relative" onclick="event.stopPropagation()">
+            <div class="text-red-600 text-3xl mb-4"></div>
+            <h2 class="text-2xl font-black mb-4 uppercase tracking-tighter italic text-red-600">Sisi ni Akina Nani?</h2>
+            <p class="text-gray-700 text-base mb-4 leading-relaxed">
+                Simba Express tuko hapa kukusaidia Mjasiriamali wa Kitanzania. Tunajua changamoto za kufunga duka na kwenda sokoni kutafuta mzigo ni kupoteza muda na wateja.
+            </p>
+            <p class="text-gray-700 text-base mb-6 font-bold">
+                Dhumuni letu ni moja tu: Wewe baki dukani uuze, sisi tutakuhangaikia mzigo ukufikie. Tunaleta bidhaa mpaka mlangoni kwako kwa bei ile ile ya soko. Hakuna usumbufu!
+            </p>
+            <button onclick="closePopup('about-modal')" class="w-full bg-black text-white py-3 text-xs font-bold uppercase tracking-widest hover:bg-red-600 transition">Nimeelewa, Turudi Kwenye Biashara</button>
+        </div>
+    </div>
+
+
+    <div id="contact-modal" class="modal" onclick="closePopup('contact-modal')">
+        <div class="bg-white p-8 max-w-md rounded-sm shadow-2xl relative" onclick="event.stopPropagation()">
+            <div class="text-green-600 text-3xl mb-4"></div>
+            <h2 class="text-2xl font-black mb-4 uppercase tracking-tighter italic text-red-600">Wasiliana nasi</h2>
+            <p class="text-gray-600 text-sm mb-6">
+                Una swali au unataka oda maalum? Tupigie au tutumie ujumbe WhatsApp sasa hivi.
+            </p>
+            <div class="space-y-4 mb-8">
+                <div class="flex items-center gap-4 border-b pb-3">
+                    <span class="text-xl">📍</span>
+                    <div>
+                        <p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest">Ofisi Zetu</p>
+                        <p class="font-bold text-sm text-gray-800">Mtaa wa Aggrey, Kariakoo, Dar es Salaam</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-4 border-b pb-3 cursor-pointer hover:text-green-600">
+                    <span class="text-xl">💬</span>
+                    <div>
+                        <p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest">Piga / WhatsApp</p>
+                        <p class="font-bold text-sm text-gray-800">+255 685 636 220</p>
+                    </div>
+                </div>
+            </div>
+            <button onclick="closePopup('contact-modal')" class="w-full bg-red-600 text-white py-3 text-xs font-bold uppercase tracking-widest hover:bg-red-700 transition">Nimeelewa, Turudi Kwenye Biashara</button>
+        </div>
+    </div>
+
+    <section class="max-w-xl mx-auto -mt-12 bg-white border shadow-2xl p-6 relative z-10 text-center rounded-sm">
+        <h4 class="text-[20px] text-gray-400 font-bold uppercase tracking-widest mb-6">Jinsi Tunavyofanya Kazi</h4>
+        <div class="grid grid-cols-3 gap-2 mb-6 border-b pb-6">
+            <div><p class="text-red-600 font-bold">1</p><p class="text-[15px] uppercase font-bold">Chagua Bidhaa</p></div>
+            <div><p class="text-red-600 font-bold">2</p><p class="text-[15px] uppercase font-bold">Hakiki Oda Yako </p></div>
+            <div><p class="text-red-600 font-bold">3</p><p class="text-[15px] uppercase font-bold">Pokea Oda Yako</p></div>
+        </div>
+        <p class="text-sm font-bold text-gray-700">Weka oda kwa simu: <span class="text-red-600 font-bold">+255 685 636 220</span></p>
+        
+    </section>
+
+    <section class="container mx-auto mt-12 px-4 max-w-6xl">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+            <div class="relative flex-grow max-w-md">
+                <input type="text" id="product-search" onkeyup="filterProducts()" placeholder="Search Azam, Mo, ID..." 
+                       class="w-full p-3 pl-10 border border-gray-300 rounded focus:ring-2 focus:ring-red-600 outline-none shadow-sm">
+                <span class="absolute left-3 top-3 text-gray-400">🔍</span>
+            </div>
+            <div class="flex gap-2 overflow-x-auto no-scrollbar pb-2" id="category-tabs">
+                <button onclick="filterByCategory('All')" class="category-tab active px-5 py-2 border rounded-full text-[10px] font-bold uppercase tracking-tighter whitespace-nowrap">Bidhaa Zote</button>
+                <button onclick="filterByCategory('Grains')" class="category-tab px-5 py-2 border rounded-full text-[10px] font-bold uppercase tracking-tighter whitespace-nowrap">Nafaka</button>
+                <button onclick="filterByCategory('Oils')" class="category-tab px-5 py-2 border rounded-full text-[10px] font-bold uppercase tracking-tighter whitespace-nowrap">Mafuta</button>
+                <button onclick="filterByCategory('Drinks')" class="category-tab px-5 py-2 border rounded-full text-[10px] font-bold uppercase tracking-tighter whitespace-nowrap">Vinywaji</button>
+            </div>
+        </div>
+
+        <h3 class="text-xl font-bold text-gray-800 mb-6 border-l-4 border-red-600 pl-3 uppercase tracking-tighter">Bidhaa Muhimu za Kila Siku</h3>
+        <div id="product-list" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
+            </div>
+        <div id="no-results" class="hidden text-center py-20 text-gray-400">No products match your search.</div>
+    </main>
+
+    <section id="faq-section" class="bg-gray-50 py-16 mt-12 border-t border-b">
+        <div class="max-w-2xl mx-auto px-4">
+            <h3 class="text-2xl font-bold text-center mb-10 uppercase tracking-tighter">Maswali Yanayoulizwa Mara Kwa Mara</h3>
+            <div class="space-y-4">
+                <details class="bg-white p-5 border rounded-sm shadow-sm group">
+                    <summary class="font-bold text-sm cursor-pointer list-none flex justify-between items-center uppercase tracking-tight">
+                        Je, nitalipaje mzigo wangu? <span class="text-red-600 group-open:rotate-180 transition-transform">▼</span>
+                    </summary>
+                    <p class="text-gray-600 text-sm mt-4 leading-relaxed">Lipa Baada ya Kupokea: Hatupokei pesa kabla ya mzigo kufika. Ukikagua mzigo wako na kuridhika, ndipo unalipa kwa Cash au M-Pesa. Hakuna risk yoyote kwako.</p>
+                </details>
+                <details class="bg-white p-5 border rounded-sm shadow-sm group">
+                    <summary class="font-bold text-sm cursor-pointer list-none flex justify-between items-center uppercase tracking-tight">
+                        Nikipata mzigo tofauti na niliyoagiza inakuwaje? <span class="text-red-600 group-open:rotate-180 transition-transform">▼</span>
+                    </summary>
+                    <p class="text-gray-600 text-sm mt-4 leading-relaxed">Kagua Kwanza: Dereva akifika, fungua na kagua bidhaa zako. Ukiona kitu kimekosekana au kimeharibika, rudisha papo hapo bila gharama yoyote. Utalipia tu kile ulichokubali.</p>
+                </details>
+                <details class="bg-white p-5 border rounded-sm shadow-sm group">
+                    <summary class="font-bold text-sm cursor-pointer list-none flex justify-between items-center uppercase tracking-tight">
+                        Inachukua muda gani mzigo kufika? <span class="text-red-600 group-open:rotate-180 transition-transform">▼</span>
+                    </summary>
+                    <p class="text-gray-600 text-sm mt-4 leading-relaxed">Ndani ya Dakika 30-60: Tunajua biashara yako inategemea stock. Tukishathibitisha oda yako kupitia WhatsApp, dereva wetu anaanza safari mara moja. Hutahitaji kufunga duka kwenda sokoni.</p>
+                </details>
+                <details class="bg-white p-5 border rounded-sm shadow-sm group">
+                    <summary class="font-bold text-sm cursor-pointer list-none flex justify-between items-center uppercase tracking-tight">
+                        Sijui kutumia website, nitawezaje kuagiza? <span class="text-red-600 group-open:rotate-180 transition-transform">▼</span>
+                    </summary>
+                    <p class="text-gray-600 text-sm mt-4 leading-relaxed">Agiza kwa WhatsApp au Simu: Website yetu ni kama "catalog" ya kuona bei tu. Unaweza kutupigia simu moja kwa moja au kutuma picha ya bidhaa unazotaka kupitia WhatsApp. Tunafanya kazi rahisi kwako.</p>
+                </details>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-16 bg-white">
+        <div class="container mx-auto px-4">
+            <p class="text-[20px] text-center font-bold text-black uppercase tracking-widest mb-10">Tunawafikishia chapa zinazoaminika Tanzania.</p>
+            <div class="grid grid-cols-3 md:grid-cols-6 gap-10 items-center">                
+                <img src="brands/azam.jpg" class="h-10 mx-auto object-contain" alt="AZAM">
+                <img src="brands/mo1.jpg" class="h-10 mx-auto object-contain" alt="MO">
+                <img src="brands/jambo.png" class="h-10 mx-auto object-contain" alt="JAMBO">
+                <img src="brands/cocacola.png" class="h-10 mx-auto object-contain" alt="COCACOLA">
+                <img src="brands/pepsi.jpg" class="h-10 mx-auto object-contain" alt="PEPSI">
+                <img src="brands/gsm.png" class="h-10 mx-auto object-contain" alt="GSM">
+            </div>
+        </div>
+    </section>
+
+    <div id="cart-trigger" class="fixed bottom-6 right-6 hidden z-40">
+        <button onclick="openPopup('cart-modal')" class="bg-red-600 text-white px-8 py-4 rounded-full shadow-2xl font-bold flex items-center gap-3 hover:scale-105 transition transform">
+            <span class="uppercase text-xs tracking-widest">View Order</span>
+            <span id="cart-count" class="bg-white text-red-600 px-2 rounded-full text-xs">0</span>
+        </button>
+    </div>
+
+   <div id="product-modal" class="modal">
+     <div class="bg-white w-full max-w-md rounded-sm overflow-hidden relative shadow-2xl">
+        
+        <div class="w-full h-64 bg-gray-100 flex items-center justify-center p-4">
+            <img id="modal-img" src="" 
+                 class="max-w-full max-h-full object-contain" 
+                 alt="Product Preview">
+        </div>
+
+        <div class="p-8">
+            <div id="modal-id" class="text-[10px] font-bold text-blue-500 uppercase tracking-widest mb-1"></div>
+            <h2 id="modal-name" class="text-2xl font-bold mb-2 text-gray-900 leading-tight"></h2>
+            <p id="modal-price" class="text-red-600 font-extrabold text-2xl mb-4"></p>
+            <p id="modal-desc" class="text-gray-500 text-sm mb-8 leading-relaxed border-l-2 border-gray-100 pl-4"></p>
+            
+            <div class="flex items-center justify-between border-t pt-6">
+                <div class="flex items-center border border-gray-300 rounded overflow-hidden shadow-sm">
+                    <button onclick="changeQty(-1)" class="px-5 py-3 bg-gray-50 hover:bg-gray-200 font-bold transition">-</button>
+                    <span id="modal-qty" class="px-6 py-3 font-bold text-lg min-w-[60px] text-center">1</span>
+                    <button onclick="changeQty(1)" class="px-5 py-3 bg-gray-50 hover:bg-gray-200 font-bold transition">+</button>
+                </div>
+                <button onclick="confirmAddToCart()" class="bg-red-600 text-white px-8 py-4 font-bold rounded-sm uppercase text-xs tracking-widest shadow-lg hover:bg-red-700 transition transform active:scale-95">
+                    Add to Order
+                </button>
+            </div>
+        </div>
+        
+            <button onclick="closePopup('product-modal')" class="absolute top-4 right-4 bg-white/90 text-black w-10 h-10 rounded-full shadow-md font-bold flex items-center justify-center hover:bg-red-600 hover:text-white transition">✕</button>
+        </div>
+    </div>
+
+    <div id="cart-modal" class="modal">
+        <div class="bg-white w-full max-w-md p-8 rounded-sm shadow-2xl">
+            <h2 class="text-xl font-bold mb-6 border-b pb-4 uppercase tracking-tighter italic">Your Delivery Summary</h2>
+            <div id="cart-items" class="space-y-4 mb-8 max-h-48 overflow-y-auto pr-2 border-b pb-4"></div>
+            
+            <div class="space-y-4 mb-8 text-sm">
+                <input type="tel" id="cust-phone" placeholder="WhatsApp / Phone (07xx xxx xxx)" class="w-full p-4 border rounded focus:ring-1 focus:ring-red-600 outline-none">
+                <input type="text" id="cust-loc" placeholder="Shop Name & Location (Kariakoo, etc.)" class="w-full p-4 border rounded focus:ring-1 focus:ring-red-600 outline-none">
+            </div>
+
+            <div class="flex justify-between font-bold text-2xl mb-8">
+                <span>Total:</span>
+                <span id="cart-total" class="text-red-600">Tsh 0</span>
+            </div>
+            <button onclick="sendWhatsApp()" class="w-full bg-green-600 text-white py-5 rounded-sm font-bold uppercase tracking-widest hover:bg-green-700 transition">Confirm via WhatsApp</button>
+            <button onclick="closePopup('cart-modal')" class="w-full text-gray-400 text-[10px] mt-6 font-bold uppercase tracking-widest">Back to catalog</button>
+        </div>
+    </div>
+
+    <script>
+        const products = [
+            { id: "Az-01", brand: "Azam", name: "Azam Cola", price: 4200, category: "Drinks", desc: "12 Pack x 1.5L. Pure drinking water.", img: "drinks/AZAM-COLA-CROPPED.png" },
+            { id: "AZ-02", brand: "Azam", name: "Nazi Ya Packet", price: 2000, category: "Grains", desc: "12 Pack x 1.5L. Pure drinking water.", img: "grain/AZAM COCONUT CREAM.png" },
+            { id: "J-03", brand: "Azam", name: "Maji ya Uhai", price: 4200, category: "Drinks", desc: "12 Pack x 1.5L. Pure drinking water.", img: "drinks/Uhai1l.jpg" },
+            { id: "A-04", brand: "Azam", name: "Azam  PPF ", price: 2100, category: "Pasta", desc: "Wholesale box of 40 individual packs.", img: "grain/Azam-PPF-1.png" },
+            { id: "M-05", brand: "Azam", name: "Unga wa Ngano", price: 30000, category: "Grains", desc: "Grade 1 Morogoro aromatic rice. 25kg sack.", img: "grain/HomeBakingFlour.jpg" },
+            { id: "S-06", brand: "Azam", name: "Afiya Juice Case", price: 18000, category: "Drinks", desc: "Assorted flavors, 24 units per box.", img: "grain/AZAM-MARIE-GINGER.png" },
+            { id: "S-07", brand: "Asas", name: "Maziwa ya Asas", price: 11000, category: "Grains", desc: "Box la Maziwa ya Mtindi kutoka Asas.", img: "grain/ASAS MILK.png" },
+            { id: "S-08", brand: "Redgold", name: "Redgold Tomato Sauce", price: 18000, category: "Grains", desc: "Box la Tomato Sauce za Redgold.", img: "grain/REDGOLD SAUCE.jpg" },
+            { id: "S-09", brand: "Shwari", name: "Shwari Toilet Paper", price: 10000, category: "Others", desc: "Box la toilet paper za shwari.", img: "other/SHWARI TOILET PAPER.png" },
+            { id: "S-10", brand: "Singida", name: "Mafuta ya Kula", price: 15000, category: "Oils", desc: "Mafuta ya kula ya lita 5", img: "oil/SINGIDA COOKING OIL.jpg" },
+
+        ];
+
+        let cart = [];
+        let currentProduct = null;
+        let currentQty = 1;
+
+        function renderGrid(data) {
+            const grid = document.getElementById('product-list');
+            const noRes = document.getElementById('no-results');
+            grid.innerHTML = '';
+            
+            if (data.length === 0) {
+                noRes.classList.remove('hidden');
+            } else {
+                noRes.classList.add('hidden');
+                data.forEach(p => {
+                    grid.innerHTML += `
+                        <div class="border border-gray-200 rounded-sm hover:shadow-lg transition-all cursor-pointer flex flex-col group bg-white" onclick="openProduct('${p.id}')">
+                            <div class="w-full h-48 bg-gray-50 flex items-center justify-center overflow-hidden p-2">
+                                <img src="${p.img}" 
+                                    onerror="this.src='https://via.placeholder.com/400?text=Stock+Photo'"
+                                    class="max-w-full max-h-full object-contain group-hover:scale-105 transition duration-300"
+                                    alt="${p.name}">
+                                <span class="absolute top-2 left-2 bg-white/90 text-black text-[9px] px-2 py-0.5 font-bold rounded shadow-sm border border-gray-100 uppercase">
+                                    ID: ${p.id}
+                                </span>
+                            </div>
+                            
+                            <div class="p-3 border-t border-gray-50">
+                                <p class="text-[10px] font-bold text-blue-600 uppercase tracking-tight mb-0.5">${p.brand}</p>
+                                <h4 class="font-bold text-gray-900 text-sm leading-tight h-10 line-clamp-2">${p.name}</h4>
+                                <div class="mt-2 flex items-center justify-between">
+                                    <p class="text-red-600 font-extrabold text-sm">Tsh ${p.price.toLocaleString()}</p>
+                                    <span class="text-[10px] text-gray-400 font-bold uppercase tracking-widest">${p.category}</span>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+            }
+        }
+
+        function filterProducts() {
+            const query = document.getElementById('product-search').value.toLowerCase();
+            const filtered = products.filter(p => 
+                p.name.toLowerCase().includes(query) || p.brand.toLowerCase().includes(query) || p.id.toLowerCase().includes(query)
+            );
+            renderGrid(filtered);
+        }
+
+        function filterByCategory(cat) {
+            document.querySelectorAll('.category-tab').forEach(t => t.classList.toggle('active', t.innerText.toLowerCase() === cat.toLowerCase()));
+            const filtered = cat === 'All' ? products : products.filter(p => p.category === cat);
+            renderGrid(filtered);
+        }
+
+        function openProduct(id) {
+        currentProduct = products.find(p => p.id === id);
+        currentQty = 1;
+
+        // 1. Update Image & Proportions
+        const modalImg = document.getElementById('modal-img');
+        modalImg.src = currentProduct.img;
+        
+        // Fallback if local photo is missing
+        modalImg.onerror = function() {
+            this.src = 'https://via.placeholder.com/600x400?text=Product+Image+Not+Found';
+        };
+
+        // 2. Update Text Content
+        document.getElementById('modal-id').innerText = `SKU: ${currentProduct.id} | ${currentProduct.brand}`;
+        document.getElementById('modal-name').innerText = currentProduct.name;
+        document.getElementById('modal-price').innerText = `Tsh ${currentProduct.price.toLocaleString()}`;
+        document.getElementById('modal-desc').innerText = currentProduct.desc;
+        document.getElementById('modal-qty').innerText = currentQty;
+
+        openPopup('product-modal');
+    }
+
+        function changeQty(amt) {
+            currentQty = Math.max(1, currentQty + amt);
+            document.getElementById('modal-qty').innerText = currentQty;
+        }
+
+        function confirmAddToCart() {
+            const existing = cart.find(i => i.id === currentProduct.id);
+            if(existing) existing.qty += currentQty;
+            else cart.push({...currentProduct, qty: currentQty});
+            closePopup('product-modal');
+            updateCartUI();
+        }
+
+        function updateCartUI() {
+            document.getElementById('cart-trigger').classList.toggle('hidden', cart.length === 0);
+            document.getElementById('cart-count').innerText = cart.reduce((s, i) => s + i.qty, 0);
+            let total = 0;
+            document.getElementById('cart-items').innerHTML = cart.map(i => {
+                total += (i.price * i.qty);
+                return `<div class="flex justify-between items-center text-sm"><div class="font-bold">${i.name} (x${i.qty})</div><div class="text-red-600">Tsh ${(i.price*i.qty).toLocaleString()}</div></div>`;
+            }).join('');
+            document.getElementById('cart-total').innerText = `Tsh ${total.toLocaleString()}`;
+        }
+
+        function toggleCartShortcut() {
+            if (cart.length === 0) {
+                alert("Please add products to your cart before proceeding to the WhatsApp form.");
+                window.scrollTo({ top: document.getElementById('product-search').offsetTop - 100, behavior: 'smooth' });
+            } else {
+                openPopup('cart-modal');
+            }
+        }
+
+        function sendWhatsApp() {
+            const phone = document.getElementById('cust-phone').value;
+            const loc = document.getElementById('cust-loc').value;
+            if(!phone || !loc) return alert("Please provide phone and location!");
+            const itemsTxt = cart.map(i => `• ${i.name} (Qty: ${i.qty})`).join('%0A');
+            const total = cart.reduce((s,i) => s + (i.price*i.qty), 0);
+            const msg = `*NEW SIMBA EXPRESS ORDER*%0A%0A*ID:* ${phone}%0A*Loc:* ${loc}%0A%0A*Items:*%0A${itemsTxt}%0A%0A*Total:* Tsh ${total.toLocaleString()}%0A_Payment on delivery._`;
+            window.open(`https://wa.me/255685636220?text=${msg}`, '_blank');
+        }
+
+        function openPopup(id) { document.getElementById(id).classList.add('active'); }
+        function closePopup(id) { document.getElementById(id).classList.remove('active'); }
+
+        window.onload = () => renderGrid(products);
+    </script>
+</body>
+</html>
