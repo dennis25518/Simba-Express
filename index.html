@@ -299,12 +299,15 @@
                 </div>
 
             <div class="p-6 border-t bg-gray-50">
-                <div class="space-y-3 mb-6">
-                    <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Delivery Details</p>
+                 <div class="space-y-3 mb-6">
+                    <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Unapopatikana (Mahali)</p>
+                    
                     <input type="tel" id="cust-phone" placeholder="Namba yako (07xx xxx xxx)" 
                         class="w-full border p-3 rounded-sm text-sm focus:border-red-600 outline-none">
-                    <input type="text" id="cust-loc" placeholder="Jina lako maarufu" 
+                    
+                    <input type="text" id="cust-name" placeholder="Jina lako maarufu" 
                         class="w-full border p-3 rounded-sm text-sm focus:border-red-600 outline-none">
+                    
                     <input type="text" id="cust-loc" placeholder="Mahali Unapatikana" 
                         class="w-full border p-3 rounded-sm text-sm focus:border-red-600 outline-none">
                 </div>
@@ -511,38 +514,47 @@
             }
         }
 
-     function sendWhatsApp() {
-            const phone = document.getElementById('cust-phone').value;
-            const loc = document.getElementById('cust-loc').value;
-            
-            if(!phone || !loc) return alert("Please provide phone and location!");
-            
-            const itemsTxt = cart.map(i => `• ${i.name} (Qty: ${i.qty})`).join('%0A');
-            const total = cart.reduce((s,i) => s + (i.price*i.qty), 0);
-            const msg = `*NEW SIMBA EXPRESS ORDER*%0A%0A*Phone:* ${phone}%0A*Loc:* ${loc}%0A%0A*Items:*%0A${itemsTxt}%0A%0A*Total:* Tsh ${total.toLocaleString()}%0A_Payment on delivery._`;
-            
-            window.open(`https://wa.me/255685636220?text=${msg}`, '_blank');
+    function sendWhatsApp() {
+    const phone = document.getElementById('cust-phone').value;
+    const name = document.getElementById('cust-name').value;
+    const loc = document.getElementById('cust-loc').value;
+    
+    // Validation: Hakikisha maeneo yote yamejazwa
+    if(!phone || !name || !loc) {
+        return alert("Tafadhali jaza namba, jina, na mahali unapatikana!");
+    }
+    
+    // Tengeneza list ya bidhaa
+    const itemsTxt = cart.map(i => `• ${i.name} (Qty: ${i.qty})`).join('%0A');
+    const total = cart.reduce((s, i) => s + (i.price * i.qty), 0);
+    
+    // Ujumbe wa WhatsApp (Street Style)
+    const msg = `*MZIGO MPYA - SIMBA EXPRESS*%0A%0A` +
+                `*Mteja:* ${name}%0A` +
+                `*Simu:* ${phone}%0A` +
+                `*Mahali:* ${loc}%0A%0A` +
+                `*Vitu Alivyochagua:*%0A${itemsTxt}%0A%0A` +
+                `*JUMLA:* Tsh ${total.toLocaleString()}%0A%0A` +
+                `_Malipo ni baada ya mzigo kufika._`;
+    
+    // Fungua WhatsApp
+    window.location.href = `https://wa.me/255685636220?text=${msg}`;
 
-            // --- NEW SUCCESS FLOW ---
-            
-            // 1. Show the Success Toast
-            const toast = document.getElementById("success-toast");
-            toast.className = "show";
+    // Onyesha Success Toast na Safisha Form
+    const toast = document.getElementById("success-toast");
+    toast.className = "show";
 
-            // 2. Cleanup after a short delay
-            setTimeout(() => {
-                toast.className = toast.className.replace("show", "");
-                
-                cart = []; 
-                document.getElementById('cust-phone').value = '';
-                document.getElementById('cust-loc').value = '';
-                
-                updateCartUI(); 
-                closePopup('cart-modal'); 
-                
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-            }, 3000); // Wait 3 seconds (duration of the toast)
-        }
+    setTimeout(() => {
+        toast.className = toast.className.replace("show", "");
+        cart = []; 
+        document.getElementById('cust-phone').value = '';
+        document.getElementById('cust-name').value = '';
+        document.getElementById('cust-loc').value = '';
+        updateCartUI(); 
+        closePopup('cart-modal'); 
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }, 3000);
+}
 
         function openPopup(id) { document.getElementById(id).classList.add('active'); }
         function closePopup(id) { document.getElementById(id).classList.remove('active'); }
