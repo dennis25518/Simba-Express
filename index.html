@@ -16,6 +16,79 @@
         .modal.active { display: flex; }
         .category-tab.active { border-color: #dc2626; color: #dc2626; background-color: #fef2f2; }
         .no-scrollbar::-webkit-scrollbar { display: none; }
+
+        /* Android-Friendly Scrollable Modal */
+        .modal-content-scroll {
+            max-height: 85vh; /* Prevents popup from being taller than the screen */
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            width: 95%; /* More width on mobile */
+            margin: auto;
+        }
+
+        /* Slimmer inputs for mobile thumb typing */
+        input[type="tel"], input[type="text"] {
+            font-size: 16px !important; /* Prevents iOS/Android auto-zoom on focus */
+            padding: 12px !important;
+        }
+
+        /* Fixed Product Detail for Mobile */
+        .product-modal-content {
+            max-height: 90vh; /* Limits height to 90% of screen */
+            display: flex;
+            flex-direction: column;
+            overflow: hidden; /* Prevents the whole box from scrolling */
+        }
+
+        .scrollable-content {
+            overflow-y: auto; /* Only the image and text scroll */
+            flex-grow: 1;
+        }
+
+        .fixed-bottom-actions {
+            background: white;
+            border-top: 1px solid #f3f4f6;
+            padding: 1rem;
+            z-index: 10;
+        }
+
+        /* Success Toast Notification */
+        #success-toast {
+            visibility: hidden;
+            min-width: 250px;
+            background-color: #059669; /* Emerald Green */
+            color: #fff;
+            text-align: center;
+            border-radius: 4px;
+            padding: 16px;
+            position: fixed;
+            z-index: 1000;
+            left: 50%;
+            bottom: 50px;
+            transform: translateX(-50%);
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        }
+
+        #success-toast.show {
+            visibility: visible;
+            animation: fadein 0.5s, fadeout 0.5s 2.5s;
+        }
+
+        @keyframes fadein {
+            from { bottom: 0; opacity: 0; }
+            to { bottom: 50px; opacity: 1; }
+        }
+
+        @keyframes fadeout {
+            from { bottom: 50px; opacity: 1; }
+            to { bottom: 0; opacity: 0; }
+        }
+  
     </style>
 </head>
 <body class="bg-white text-gray-900">
@@ -107,9 +180,20 @@
             </div>
         </div>
 
-        <h3 class="text-xl font-bold text-gray-800 mb-6 border-l-4 border-red-600 pl-3 uppercase tracking-tighter">Bidhaa Muhimu za Kila Siku</h3>
-        <div id="product-list" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
-            </div>
+        
+        <section class="container mx-auto mt-12 px-4 max-w-6xl">
+            <h3 class="text-xl font-bold text-gray-800 mb-6 border-l-4 border-red-600 pl-3 uppercase tracking-tighter">
+                Mahitaji ya Chakula 
+            </h3>
+            <div id="product-list-essentials" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 mb-16"></div>
+
+            <h3 class="text-xl font-bold text-gray-800 mb-6 border-l-4 border-blue-600 pl-3 uppercase tracking-tighter">
+                Vinywaji na Mengineyo 
+            </h3>
+            <div id="product-list-others" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6"></div>
+
+            <div id="no-results" class="hidden text-center py-20 text-gray-400">No products match your search.</div>
+        </section>
         <div id="no-results" class="hidden text-center py-20 text-gray-400">No products match your search.</div>
     </main>
 
@@ -145,19 +229,26 @@
         </div>
     </section>
 
-    <section class="py-16 bg-white">
-        <div class="container mx-auto px-4">
-            <p class="text-[20px] text-center font-bold text-black uppercase tracking-widest mb-10">Tunawafikishia chapa zinazoaminika Tanzania.</p>
-            <div class="grid grid-cols-3 md:grid-cols-6 gap-10 items-center">                
-                <img src="brands/azam.jpg" class="h-10 mx-auto object-contain" alt="AZAM">
-                <img src="brands/mo1.jpg" class="h-10 mx-auto object-contain" alt="MO">
-                <img src="brands/jambo.png" class="h-10 mx-auto object-contain" alt="JAMBO">
-                <img src="brands/cocacola.png" class="h-10 mx-auto object-contain" alt="COCACOLA">
-                <img src="brands/pepsi.jpg" class="h-10 mx-auto object-contain" alt="PEPSI">
-                <img src="brands/gsm.png" class="h-10 mx-auto object-contain" alt="GSM">
-            </div>
+    <section class="py-12 bg-white">
+    <div class="container mx-auto px-4">
+        <p class="text-[20px] text-center font-bold text-black uppercase tracking-widest mb-10">
+            Tunakuletetia Bidhaa za Uhakika Kutoka Kwa:
+        </p>
+        
+        <div class="grid grid-cols-2 md:grid-cols-6 gap-8 md:gap-10 items-center justify-items-center">
+            <img src="brands/azam.jpg" class="h-16 md:h-12 object-contain p-2" alt="Azam">
+            <img src="brands/mo1.jpg" class="h-16 md:h-12 object-contain p-2" alt="Mo Dewji">
+            <img src="brands/jambo.png" class="h-16 md:h-12 object-contain p-2" alt="Jambo">
+            <img src="brands/cocacola.png" class="h-16 md:h-12 object-contain p-2" alt="Coca Cola">
+            <img src="brands/pepsi.jpg" class="h-16 md:h-12 object-contain p-2" alt="Pepsi">
+            <img src="brands/gsm.png" class="h-16 md:h-12 object-contain p-2" alt="GSM">
         </div>
-    </section>
+        
+        <p class="text-center text-[15px] font-bold text-black mt-10 italic uppercase">
+            Bidhaa Zote Ni Za Jumla - Bei Ya Sokoni Kabisa!
+        </p>
+    </div>
+</section>
 
     <div id="cart-trigger" class="fixed bottom-6 right-6 hidden z-40">
         <button onclick="openPopup('cart-modal')" class="bg-red-600 text-white px-8 py-4 rounded-full shadow-2xl font-bold flex items-center gap-3 hover:scale-105 transition transform">
@@ -198,23 +289,42 @@
     </div>
 
     <div id="cart-modal" class="modal">
-        <div class="bg-white w-full max-w-md p-8 rounded-sm shadow-2xl">
-            <h2 class="text-xl font-bold mb-6 border-b pb-4 uppercase tracking-tighter italic">Your Delivery Summary</h2>
-            <div id="cart-items" class="space-y-4 mb-8 max-h-48 overflow-y-auto pr-2 border-b pb-4"></div>
-            
-            <div class="space-y-4 mb-8 text-sm">
-                <input type="tel" id="cust-phone" placeholder="WhatsApp / Phone (07xx xxx xxx)" class="w-full p-4 border rounded focus:ring-1 focus:ring-red-600 outline-none">
-                <input type="text" id="cust-loc" placeholder="Shop Name & Location (Kariakoo, etc.)" class="w-full p-4 border rounded focus:ring-1 focus:ring-red-600 outline-none">
+        <div class="bg-white w-full max-w-sm mx-auto rounded-sm shadow-2xl modal-content-scroll">
+            <div class="p-6 border-b sticky top-0 bg-white z-10 flex justify-between items-center">
+                <h2 class="text-lg font-black uppercase tracking-tighter italic">Order Summary</h2>
+                <button onclick="closePopup('cart-modal')" class="text-gray-400">✕</button>
             </div>
 
-            <div class="flex justify-between font-bold text-2xl mb-8">
-                <span>Total:</span>
-                <span id="cart-total" class="text-red-600">Tsh 0</span>
+            <div id="cart-items" class="p-6 space-y-4 overflow-y-auto flex-grow" style="max-height: 200px;">
+                </div>
+
+            <div class="p-6 border-t bg-gray-50">
+                <div class="space-y-3 mb-6">
+                    <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Delivery Details</p>
+                    <input type="tel" id="cust-phone" placeholder="Phone (07xx xxx xxx)" 
+                        class="w-full border p-3 rounded-sm text-sm focus:border-red-600 outline-none">
+                    <input type="text" id="cust-loc" placeholder="Shop Name & Location" 
+                        class="w-full border p-3 rounded-sm text-sm focus:border-red-600 outline-none">
+                </div>
+
+                <div class="flex justify-between items-center mb-6">
+                    <span class="text-sm font-bold text-gray-500 uppercase">Total amount:</span>
+                    <span id="cart-total" class="text-xl font-black text-red-600">Tsh 0</span>
+                </div>
+
+                <button onclick="sendWhatsApp()" class="w-full bg-green-600 text-white py-4 rounded-sm font-black uppercase tracking-widest text-xs shadow-lg active:scale-95 transition flex items-center justify-center gap-2">
+                    <span>Confirm via WhatsApp</span>
+                </button>
+                
+                <button onclick="closePopup('cart-modal')" class="w-full text-center text-[10px] font-bold text-gray-400 uppercase mt-4 tracking-widest">
+                    Back to Catalog
+                </button>
             </div>
-            <button onclick="sendWhatsApp()" class="w-full bg-green-600 text-white py-5 rounded-sm font-bold uppercase tracking-widest hover:bg-green-700 transition">Confirm via WhatsApp</button>
-            <button onclick="closePopup('cart-modal')" class="w-full text-gray-400 text-[10px] mt-6 font-bold uppercase tracking-widest">Back to catalog</button>
         </div>
-    </div>
+    </div>  
+
+    <!-- Success Toast Notification -->
+     <div id="success-toast">✅ Oda Imepokelewa! Asante.</div>
 
     <script>
         const products = [
@@ -235,41 +345,58 @@
         let currentProduct = null;
         let currentQty = 1;
 
-        function renderGrid(data) {
-            const grid = document.getElementById('product-list');
-            const noRes = document.getElementById('no-results');
-            grid.innerHTML = '';
-            
-            if (data.length === 0) {
-                noRes.classList.remove('hidden');
-            } else {
-                noRes.classList.add('hidden');
-                data.forEach(p => {
-                    grid.innerHTML += `
-                        <div class="border border-gray-200 rounded-sm hover:shadow-lg transition-all cursor-pointer flex flex-col group bg-white" onclick="openProduct('${p.id}')">
-                            <div class="w-full h-48 bg-gray-50 flex items-center justify-center overflow-hidden p-2">
-                                <img src="${p.img}" 
-                                    onerror="this.src='https://via.placeholder.com/400?text=Stock+Photo'"
-                                    class="max-w-full max-h-full object-contain group-hover:scale-105 transition duration-300"
-                                    alt="${p.name}">
-                                <span class="absolute top-2 left-2 bg-white/90 text-black text-[9px] px-2 py-0.5 font-bold rounded shadow-sm border border-gray-100 uppercase">
-                                    ID: ${p.id}
-                                </span>
-                            </div>
-                            
-                            <div class="p-3 border-t border-gray-50">
-                                <p class="text-[10px] font-bold text-blue-600 uppercase tracking-tight mb-0.5">${p.brand}</p>
-                                <h4 class="font-bold text-gray-900 text-sm leading-tight h-10 line-clamp-2">${p.name}</h4>
-                                <div class="mt-2 flex items-center justify-between">
-                                    <p class="text-red-600 font-extrabold text-sm">Tsh ${p.price.toLocaleString()}</p>
-                                    <span class="text-[10px] text-gray-400 font-bold uppercase tracking-widest">${p.category}</span>
-                                </div>
-                            </div>
+       function renderGrid(data) {
+        const essentialGrid = document.getElementById('product-list-essentials');
+        const othersGrid = document.getElementById('product-list-others');
+        const noRes = document.getElementById('no-results');
+        
+        // Clear both grids
+        essentialGrid.innerHTML = '';
+        othersGrid.innerHTML = '';
+        
+        if (data.length === 0) {
+            noRes.classList.remove('hidden');
+            return;
+        } 
+        
+        noRes.classList.add('hidden');
+
+        data.forEach(p => {
+            const productHTML = `
+                <div class="border border-gray-200 rounded-sm hover:shadow-lg transition-all cursor-pointer flex flex-col group bg-white" onclick="openProduct('${p.id}')">
+                    <div class="w-full h-48 bg-gray-50 flex items-center justify-center overflow-hidden p-2 relative">
+                        <img src="${p.img}" 
+                            onerror="this.src='https://via.placeholder.com/400?text=Stock+Photo'"
+                            class="max-w-full max-h-full object-contain group-hover:scale-105 transition duration-300"
+                            alt="${p.name}">
+                        <span class="absolute top-2 left-2 bg-white/90 text-black text-[9px] px-2 py-0.5 font-bold rounded shadow-sm border border-gray-100 uppercase tracking-tighter">
+                            ID: ${p.id}
+                        </span>
+                    </div>
+                    
+                    <div class="p-3 border-t border-gray-50">
+                        <p class="text-[10px] font-bold text-blue-600 uppercase tracking-tight mb-0.5">${p.brand}</p>
+                        <h4 class="font-bold text-gray-900 text-sm leading-tight h-10 line-clamp-2">${p.name}</h4>
+                        <div class="mt-2 flex items-center justify-between">
+                            <p class="text-red-600 font-extrabold text-sm">Tsh ${p.price.toLocaleString()}</p>
+                            <span class="text-[10px] text-gray-400 font-bold uppercase tracking-widest">${p.category}</span>
                         </div>
-                    `;
-                });
+                    </div>
+                </div>
+            `;
+
+            // Logic to split the products
+            if (p.category === 'Grains' || p.category === 'Oils' || p.category === 'Pasta') {
+                essentialGrid.innerHTML += productHTML;
+            } else {
+                othersGrid.innerHTML += productHTML;
             }
-        }
+        });
+
+        // Hide section headers if they are empty (during search/filter)
+        essentialGrid.previousElementSibling.style.display = essentialGrid.innerHTML === '' ? 'none' : 'block';
+        othersGrid.previousElementSibling.style.display = othersGrid.innerHTML === '' ? 'none' : 'block';
+    }
 
         function filterProducts() {
             const query = document.getElementById('product-search').value.toLowerCase();
@@ -322,14 +449,55 @@
         }
 
         function updateCartUI() {
-            document.getElementById('cart-trigger').classList.toggle('hidden', cart.length === 0);
-            document.getElementById('cart-count').innerText = cart.reduce((s, i) => s + i.qty, 0);
+            const trigger = document.getElementById('cart-trigger');
+            const countEl = document.getElementById('cart-count');
+            const itemsEl = document.getElementById('cart-items');
+            const totalEl = document.getElementById('cart-total');
+
+            if (cart.length === 0) {
+                trigger.classList.add('hidden');
+                itemsEl.innerHTML = '<p class="text-center text-gray-400 py-4 text-xs italic uppercase">Your cart is empty</p>';
+                totalEl.innerText = 'Tsh 0';
+                return;
+            }
+
+            trigger.classList.remove('hidden');
+            countEl.innerText = cart.reduce((s, i) => s + i.qty, 0);
+
             let total = 0;
-            document.getElementById('cart-items').innerHTML = cart.map(i => {
+            itemsEl.innerHTML = cart.map((i, index) => {
                 total += (i.price * i.qty);
-                return `<div class="flex justify-between items-center text-sm"><div class="font-bold">${i.name} (x${i.qty})</div><div class="text-red-600">Tsh ${(i.price*i.qty).toLocaleString()}</div></div>`;
+                return `
+                    <div class="flex justify-between items-center text-sm border-b border-gray-50 pb-3 mb-2">
+                        <div class="flex-grow">
+                            <div class="font-bold text-gray-800">${i.name}</div>
+                            <div class="text-[10px] text-gray-400 uppercase font-black">Qty: ${i.qty} | Tsh ${i.price.toLocaleString()} ea</div>
+                        </div>
+                        <div class="flex items-center gap-4">
+                            <div class="text-red-600 font-black text-right whitespace-nowrap">Tsh ${(i.price * i.qty).toLocaleString()}</div>
+                            <button onclick="removeItem(${index})" class="text-gray-300 hover:text-red-600 transition p-1 text-lg" title="Ondoa">
+                                🗑️
+                            </button>
+                        </div>
+                    </div>`;
             }).join('');
-            document.getElementById('cart-total').innerText = `Tsh ${total.toLocaleString()}`;
+
+            totalEl.innerText = `Tsh ${total.toLocaleString()}`;
+        }
+
+        function removeItem(index) {
+            // Remove the item from the array
+            cart.splice(index, 1);
+            
+            // Refresh the UI to show the updated list
+            updateCartUI();
+            
+            // If the cart becomes empty after removal, close the modal
+            if (cart.length === 0) {
+                setTimeout(() => {
+                    closePopup('cart-modal');
+                }, 300);
+            }
         }
 
         function toggleCartShortcut() {
@@ -341,14 +509,37 @@
             }
         }
 
-        function sendWhatsApp() {
+     function sendWhatsApp() {
             const phone = document.getElementById('cust-phone').value;
             const loc = document.getElementById('cust-loc').value;
+            
             if(!phone || !loc) return alert("Please provide phone and location!");
+            
             const itemsTxt = cart.map(i => `• ${i.name} (Qty: ${i.qty})`).join('%0A');
             const total = cart.reduce((s,i) => s + (i.price*i.qty), 0);
-            const msg = `*NEW SIMBA EXPRESS ORDER*%0A%0A*ID:* ${phone}%0A*Loc:* ${loc}%0A%0A*Items:*%0A${itemsTxt}%0A%0A*Total:* Tsh ${total.toLocaleString()}%0A_Payment on delivery._`;
+            const msg = `*NEW SIMBA EXPRESS ORDER*%0A%0A*Phone:* ${phone}%0A*Loc:* ${loc}%0A%0A*Items:*%0A${itemsTxt}%0A%0A*Total:* Tsh ${total.toLocaleString()}%0A_Payment on delivery._`;
+            
             window.open(`https://wa.me/255685636220?text=${msg}`, '_blank');
+
+            // --- NEW SUCCESS FLOW ---
+            
+            // 1. Show the Success Toast
+            const toast = document.getElementById("success-toast");
+            toast.className = "show";
+
+            // 2. Cleanup after a short delay
+            setTimeout(() => {
+                toast.className = toast.className.replace("show", "");
+                
+                cart = []; 
+                document.getElementById('cust-phone').value = '';
+                document.getElementById('cust-loc').value = '';
+                
+                updateCartUI(); 
+                closePopup('cart-modal'); 
+                
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }, 3000); // Wait 3 seconds (duration of the toast)
         }
 
         function openPopup(id) { document.getElementById(id).classList.add('active'); }
