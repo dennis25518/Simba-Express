@@ -94,19 +94,17 @@
 <body class="bg-white text-gray-900">
 
    <nav class="fixed top-0 left-0 right-0 bg-white border-b z-50 shadow-sm">
-    <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between w-full">
-        <div class="flex items-center">
-            <img src="/favicon/simba_croped2_cropped.png" alt="Logo" class="h-10 w-auto">
+        <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between w-full">
+            <div class="flex items-center">
+                <img src="/favicon/simba_croped2_cropped.png" alt="Logo" class="h-10 w-auto">
+            </div>
+            <div class="flex items-center space-x-4 text-[11px] font-black uppercase">
+                <button onclick="openPopup('about-modal')" style="color: #E60000;">KUHUSU</button> 
+                <span class="text-gray-300">|</span> 
+                <button onclick="openPopup('contact-modal')" style="color: #E60000;">MASAADA</button>
+            </div>
         </div>
-        <div class="flex items-center space-x-4 text-[11px] font-black uppercase">
-            <button onclick="openPopup('about-modal')" style="color: #E60000;">KUHUSU</button> 
-            <span class="text-gray-300">|</span> 
-            <button onclick="openPopup('contact-modal')" style="color: #E60000;">MAWASILIANO</button>
-        </div>
-    </div>
-
-   
-</nav>
+   </nav>
 
 <div class="h-20"></div>
 
@@ -155,13 +153,26 @@
                         <p class="font-bold text-sm text-gray-800">Mtaa wa Aggrey, Kariakoo, Dar es Salaam</p>
                     </div>
                 </div>
-                <div class="flex items-center gap-4 border-b pb-3 cursor-pointer hover:text-green-600">
-                    <span class="text-xl">💬</span>
-                    <div>
-                        <p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest">Piga / WhatsApp</p>
-                        <p class="font-bold text-sm text-gray-800">+255 685 636 220</p>
+               <div class="flex items-center gap-4 border-b pb-4 group">
+                    <a href="https://wa.me/255685636220" target="_blank" class="text-2xl hover:scale-110 transition-transform cursor-pointer">
+                        🟢
+                    </a>
+                    
+                    <div class="flex-1">
+                        <p class="text-[10px] text-gray-400 font-black uppercase tracking-widest mb-1">
+                            Piga simu / WhatsApp
+                        </p>
+                        
+                        <a href="tel:+255685636220" 
+                        class="block font-black text-lg text-gray-800 hover:text-red-600 transition-colors active:opacity-60">
+                            +255 685 636 220
+                        </a>
                     </div>
-                </div>
+
+                    <a href="tel:+255685636220" class="bg-red-600 text-white p-2 rounded-full shadow-md md:hidden">
+                        📞
+                    </a>
+               </div>
             </div>
             <button onclick="closePopup('contact-modal')" class="w-full bg-red-600 text-white py-3 text-xs font-bold uppercase tracking-widest hover:bg-red-700 transition">Nimeelewa, Turudi Kwenye Biashara</button>
         </div>
@@ -351,44 +362,52 @@
 </div>
 
     <div id="cart-modal" class="modal">
-        <div class="bg-white w-full max-w-sm mx-auto rounded-sm shadow-2xl modal-content-scroll">
-            <div class="p-6 border-b sticky top-0 bg-white z-10 flex justify-between items-center">
-                <h2 class="text-lg font-black uppercase tracking-tighter italic">Muhtasari wa Oda Yako</h2>
-                <button onclick="closePopup('cart-modal')" class="text-gray-400">✕</button>
-            </div>
-
-            <div id="cart-items" class="p-6 space-y-4 overflow-y-auto flex-grow" style="max-height: 200px;">
-                </div>
-
-            <div class="p-6 border-t bg-gray-50">
-                 <div class="space-y-3 mb-6">
-                    <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Unapopatikana (Mahali)</p>
-                    
-                    <input type="tel" id="cust-phone" placeholder="Namba yako (07xx xxx xxx)" 
-                        class="w-full border p-3 rounded-sm text-sm focus:border-red-600 outline-none">
-                    
-                    <input type="text" id="cust-name" placeholder="Jina lako maarufu" 
-                        class="w-full border p-3 rounded-sm text-sm focus:border-red-600 outline-none">
-                    
-                    <input type="text" id="cust-loc" placeholder="Mahali Unapatikana" 
-                        class="w-full border p-3 rounded-sm text-sm focus:border-red-600 outline-none">
-                </div>
-
-                <div class="flex justify-between items-center mb-6">
-                    <span class="text-sm font-bold text-gray-500 uppercase">Jumla Kuu:</span>
-                    <span id="cart-total" class="text-xl font-black text-red-600">Tsh 0</span>
-                </div>
-
-                <button onclick="sendWhatsApp()" class="w-full bg-green-600 text-white py-4 rounded-sm font-black uppercase tracking-widest text-xs shadow-lg active:scale-95 transition flex items-center justify-center gap-2">
-                    <span>Thibitisha kwa WhatsApp</span>
-                </button>
-                
-                <button onclick="closePopup('cart-modal')" class="w-full text-center text-[10px] font-bold text-gray-400 uppercase mt-4 tracking-widest">
-                    Rudi Kwenye Bidhaa
-                </button>
-            </div>
+      <div class="bg-white w-full max-w-sm mx-auto rounded-sm shadow-2xl modal-content-scroll">
+        <div class="p-6 border-b sticky top-0 bg-white z-10 flex justify-between items-center">
+            <h2 class="text-lg font-black uppercase tracking-tighter italic text-red-600">Muhtasari wa Oda Yako</h2>
+            <button onclick="closePopup('cart-modal')" class="text-gray-400 text-xl font-bold">✕</button>
         </div>
-    </div>  
+
+        <div id="cart-items" class="p-6 space-y-4 overflow-y-auto flex-grow" style="max-height: 200px;">
+            </div>
+
+        <div class="p-6 border-t bg-gray-50">
+            <div class="space-y-3 mb-6">
+                <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Maelezo ya Ufikishaji</p>
+                <input type="tel" id="cust-phone" placeholder="Namba yako ya Simu" 
+                    class="w-full border-2 p-3 rounded-sm text-sm font-bold focus:border-red-600 outline-none transition-colors">
+                <input type="text" id="cust-name" placeholder="Jina lako (Mfano: Simba)" 
+                    class="w-full border-2 p-3 rounded-sm text-sm font-bold focus:border-red-600 outline-none transition-colors">
+                <input type="text" id="cust-loc" placeholder="Mahali (Mtaa/Jengo)" 
+                    class="w-full border-2 p-3 rounded-sm text-sm font-bold focus:border-red-600 outline-none transition-colors">
+            </div>
+
+            <div class="space-y-2 mb-4 border-b-2 border-dashed pb-4">
+                <div class="flex justify-between text-xs font-bold text-gray-500 uppercase">
+                    <span>Thamani ya Bidhaa:</span>
+                    <span id="subtotal-amount">Tsh 0</span>
+                </div>
+                <div class="flex justify-between text-xs font-black text-red-600 uppercase">
+                    <span>Nauli (Popote Dar):</span>
+                    <span>Tsh 5,000</span>
+                </div>
+            </div>
+
+            <div class="flex justify-between items-center mb-6">
+                <span class="text-sm font-black text-gray-800 uppercase italic">Jumla Kuu:</span>
+                <span id="cart-total" class="text-2xl font-black text-gray-900 tracking-tighter">Tsh 5,000</span>
+            </div>
+
+            <button onclick="sendWhatsApp()" class="w-full bg-green-600 text-white py-5 rounded-lg font-black uppercase tracking-widest text-xs shadow-xl active:scale-95 transition flex items-center justify-center gap-2">
+                <span>Thibitisha Oda WhatsApp</span>
+            </button>
+            
+            <button onclick="closePopup('cart-modal')" class="w-full text-center text-[10px] font-black text-gray-400 uppercase mt-5 tracking-widest hover:text-red-600 transition">
+                ← Ongeza Bidhaa Nyingine
+            </button>
+        </div>
+    </div>
+</div> 
 
     <!-- Success Toast Notification -->
      <div id="success-toast">✅ Oda Imepokelewa! Asante.</div>
@@ -516,42 +535,52 @@
         }
 
         function updateCartUI() {
-            const trigger = document.getElementById('cart-trigger');
-            const countEl = document.getElementById('cart-count');
-            const itemsEl = document.getElementById('cart-items');
-            const totalEl = document.getElementById('cart-total');
+    const trigger = document.getElementById('cart-trigger');
+    const countEl = document.getElementById('cart-count');
+    const itemsEl = document.getElementById('cart-items');
+    const totalEl = document.getElementById('cart-total');
+    const subtotalEl = document.getElementById('subtotal-amount'); // New element from your HTML
 
-            if (cart.length === 0) {
-                trigger.classList.add('hidden');
-                itemsEl.innerHTML = '<p class="text-center text-gray-400 py-4 text-xs italic uppercase">Kapu lako halina bidhaa</p>';
-                totalEl.innerText = 'Tsh 0';
-                return;
-            }
+    const deliveryFee = 5000;
 
-            trigger.classList.remove('hidden');
-            countEl.innerText = cart.reduce((s, i) => s + i.qty, 0);
+    if (cart.length === 0) {
+        trigger.classList.add('hidden');
+        itemsEl.innerHTML = '<p class="text-center text-gray-400 py-4 text-xs italic uppercase">Kapu lako halina bidhaa</p>';
+        if (subtotalEl) subtotalEl.innerText = 'Tsh 0';
+        totalEl.innerText = 'Tsh 0'; // Or 'Tsh 5,000' if you want it preloaded even when empty
+        return;
+    }
 
-            let total = 0;
-            itemsEl.innerHTML = cart.map((i, index) => {
-                total += (i.price * i.qty);
-                return `
-                    <div class="flex justify-between items-center text-sm border-b border-gray-50 pb-3 mb-2">
-                        <div class="flex-grow">
-                            <div class="font-bold text-gray-800">${i.name}</div>
-                            <div class="text-[10px] text-gray-400 uppercase font-black">Qty: ${i.qty} | Tsh ${i.price.toLocaleString()} ea</div>
-                        </div>
-                        <div class="flex items-center gap-4">
-                            <div class="text-red-600 font-black text-right whitespace-nowrap">Tsh ${(i.price * i.qty).toLocaleString()}</div>
-                            <button onclick="removeItem(${index})" class="text-gray-300 hover:text-red-600 transition p-1 text-lg" title="Ondoa">
-                                🗑️
-                            </button>
-                        </div>
-                    </div>`;
-            }).join('');
+    trigger.classList.remove('hidden');
+    countEl.innerText = cart.reduce((s, i) => s + i.qty, 0);
 
-            totalEl.innerText = `Tsh ${total.toLocaleString()}`;
-        }
+    let subtotal = 0;
+    itemsEl.innerHTML = cart.map((i, index) => {
+        subtotal += (i.price * i.qty);
+        return `
+            <div class="flex justify-between items-center text-sm border-b border-gray-50 pb-3 mb-2">
+                <div class="flex-grow">
+                    <div class="font-bold text-gray-800">${i.name}</div>
+                    <div class="text-[10px] text-gray-400 uppercase font-black">Qty: ${i.qty} | Tsh ${i.price.toLocaleString()} ea</div>
+                </div>
+                <div class="flex items-center gap-4">
+                    <div class="text-red-600 font-black text-right whitespace-nowrap">Tsh ${(i.price * i.qty).toLocaleString()}</div>
+                    <button onclick="removeItem(${index})" class="text-gray-300 hover:text-red-600 transition p-1 text-lg" title="Ondoa">
+                        🗑️
+                    </button>
+                </div>
+            </div>`;
+    }).join('');
 
+    // Update the Transparent Billing section
+    if (subtotalEl) {
+        subtotalEl.innerText = `Tsh ${subtotal.toLocaleString()}`;
+    }
+
+    // Final Grand Total (Subtotal + 5,000)
+    const grandTotal = subtotal + deliveryFee;
+    totalEl.innerText = `Tsh ${grandTotal.toLocaleString()}`;
+}
         function removeItem(index) {
             // Remove the item from the array
             cart.splice(index, 1);
@@ -569,40 +598,49 @@
 
         function toggleCartShortcut() {
             if (cart.length === 0) {
-                alert("Please add products to your cart before proceeding to the WhatsApp form.");
+                alert("Ongeza bidhaa kwenye kikapu kwanza.");
                 window.scrollTo({ top: document.getElementById('product-search').offsetTop - 100, behavior: 'smooth' });
             } else {
                 openPopup('cart-modal');
             }
         }
 
-    function sendWhatsApp() {
+   function sendWhatsApp() {
     const phone = document.getElementById('cust-phone').value;
     const name = document.getElementById('cust-name').value;
     const loc = document.getElementById('cust-loc').value;
     
-    // Validation: Hakikisha maeneo yote yamejazwa
+    // 1. Validation: Ensure all fields are filled
     if(!phone || !name || !loc) {
         return alert("Tafadhali jaza namba, jina, na mahali unapatikana!");
     }
     
-    // Tengeneza list ya bidhaa
+    // 2. Calculate Costs
+    const subtotal = cart.reduce((s, i) => s + (i.price * i.qty), 0);
+    const deliveryFee = 5000;
+    const grandTotal = subtotal + deliveryFee;
+
+    // 3. Generate Item List
     const itemsTxt = cart.map(i => `• ${i.name} (Qty: ${i.qty})`).join('%0A');
-    const total = cart.reduce((s, i) => s + (i.price * i.qty), 0);
     
-    // Ujumbe wa WhatsApp (Street Style)
+    // 4. WhatsApp Message with Transparent Billing
     const msg = `*MZIGO MPYA - SIMBA EXPRESS*%0A%0A` +
                 `*Mteja:* ${name}%0A` +
                 `*Simu:* ${phone}%0A` +
                 `*Mahali:* ${loc}%0A%0A` +
                 `*Vitu Alivyochagua:*%0A${itemsTxt}%0A%0A` +
-                `*JUMLA:* Tsh ${total.toLocaleString()}%0A%0A` +
-                `_Malipo ni baada ya mzigo kufika._`;
+                `---------------------------%0A` +
+                `*Thamani ya Bidhaa:* Tsh ${subtotal.toLocaleString()}%0A` +
+                `*Nauli (Popote Dar):* Tsh ${deliveryFee.toLocaleString()}%0A` +
+                `*JUMLA KUU:* Tsh ${grandTotal.toLocaleString()}%0A` +
+                `---------------------------%0A` +
+                `_Malipo ni baada ya mzigo kufika._%0A` +
+                `_Mzigo utafika ndani ya dakika 60._`;
     
-    // Fungua WhatsApp
+    // 5. Open WhatsApp
     window.location.href = `https://wa.me/255685636220?text=${msg}`;
 
-    // Onyesha Success Toast na Safisha Form
+    // 6. Show Success Toast and Reset
     const toast = document.getElementById("success-toast");
     toast.className = "show";
 
