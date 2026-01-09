@@ -237,19 +237,27 @@
 
         
         <section class="container mx-auto mt-12 px-4 max-w-6xl">
-            <h3 class="text-xl font-bold text-gray-800 mb-6 border-l-4 border-red-600 pl-3 uppercase tracking-tighter">
-                Mahitaji ya Chakula 
-            </h3>
-            <div id="product-list-essentials" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 mb-16"></div>
+    <div class="mb-16">
+        <h3 class="text-xl font-black text-gray-800 mb-6 border-l-4 border-red-600 pl-3 uppercase tracking-tighter italic">Nafaka na Chakula</h3>
+        <div id="product-list-nafaka" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6"></div>
+        <button id="btn-nafaka" onclick="expandSection('nafaka')" class="hidden mx-auto mt-8 bg-gray-100 hover:bg-gray-200 text-gray-800 font-black py-3 px-8 rounded-full text-xs uppercase tracking-widest transition">Tazama Zaidi</button>
+    </div>
 
-            <h3 class="text-xl font-bold text-gray-800 mb-6 border-l-4 border-blue-600 pl-3 uppercase tracking-tighter">
-                Vinywaji na Mengineyo 
-            </h3>
-            <div id="product-list-others" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6"></div>
+    <div class="mb-16">
+        <h3 class="text-xl font-black text-gray-800 mb-6 border-l-4 border-yellow-500 pl-3 uppercase tracking-tighter italic">Vinywaji Baridi</h3>
+        <div id="product-list-vinywaji" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6"></div>
+        <button id="btn-vinywaji" onclick="expandSection('vinywaji')" class="hidden mx-auto mt-8 bg-gray-100 hover:bg-gray-200 text-gray-800 font-black py-3 px-8 rounded-full text-xs uppercase tracking-widest transition">Tazama Zaidi</button>
+    </div>
 
-            <div id="no-results" class="hidden text-center py-20 text-gray-400">Hatuna hii bidhaa kwa sasa.</div>
-        </section>
-        <div id="no-results" class="hidden text-center py-20 text-gray-400">Hatuna hii bidhaa kwa sasa.</div>
+    <div class="mb-16">
+        <h3 class="text-xl font-black text-gray-800 mb-6 border-l-4 border-blue-600 pl-3 uppercase tracking-tighter italic">Mengineyo</h3>
+        <div id="product-list-mengineyo" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6"></div>
+        <button id="btn-mengineyo" onclick="expandSection('mengineyo')" class="hidden mx-auto mt-8 bg-gray-100 hover:bg-gray-200 text-gray-800 font-black py-3 px-8 rounded-full text-xs uppercase tracking-widest transition">Tazama Zaidi</button>
+    </div>
+
+    <div id="no-results" class="hidden text-center py-20 text-gray-400 font-bold uppercase tracking-widest">Hatuna hii bidhaa kwa sasa.</div>
+</section>
+        
     </main>
 
     <section id="faq-section" class="bg-gray-50 py-16 mt-12 border-t border-b">
@@ -431,59 +439,83 @@
         let currentProduct = null;
         let currentQty = 1;
 
-       function renderGrid(data) {
-        const essentialGrid = document.getElementById('product-list-essentials');
-        const othersGrid = document.getElementById('product-list-others');
-        const noRes = document.getElementById('no-results');
-        
-        // Clear both grids
-        essentialGrid.innerHTML = '';
-        othersGrid.innerHTML = '';
-        
-        if (data.length === 0) {
-            noRes.classList.remove('hidden');
-            return;
-        } 
-        
-        noRes.classList.add('hidden');
+        let isExpanded = { essentials: false, others: false };
 
-        data.forEach(p => {
-            const productHTML = `
-                <div class="border border-gray-200 rounded-sm hover:shadow-lg transition-all cursor-pointer flex flex-col group bg-white" onclick="openProduct('${p.id}')">
-                    <div class="w-full h-48 bg-gray-50 flex items-center justify-center overflow-hidden p-2 relative">
-                        <img src="${p.img}" 
-                            onerror="this.src='https://via.placeholder.com/400?text=Stock+Photo'"
-                            class="max-w-full max-h-full object-contain group-hover:scale-105 transition duration-300"
-                            alt="${p.name}">
-                        <span class="absolute top-2 left-2 bg-white/90 text-black text-[9px] px-2 py-0.5 font-bold rounded shadow-sm border border-gray-100 uppercase tracking-tighter">
-                            ID: ${p.id}
-                        </span>
-                    </div>
-                    
-                    <div class="p-3 border-t border-gray-50">
-                        <p class="text-[10px] font-bold text-blue-600 uppercase tracking-tight mb-0.5">${p.brand}</p>
-                        <h4 class="font-bold text-gray-900 text-sm leading-tight h-10 line-clamp-2">${p.name}</h4>
-                        <div class="mt-2 flex items-center justify-between">
-                            <p class="text-red-600 font-extrabold text-sm">Tsh ${p.price.toLocaleString()}</p>
-                            <span class="text-[10px] text-gray-400 font-bold uppercase tracking-widest">${p.category}</span>
-                        </div>
-                    </div>
-                </div>
-            `;
+       // Global state to track which sections are expanded
+       let expandedSections = { nafaka: false, vinywaji: false, mengineyo: false };
 
-            // Logic to split the products
-            if (p.category === 'Grains' || p.category === 'Oils' || p.category === 'Pasta') {
-                essentialGrid.innerHTML += productHTML;
-            } else {
-                othersGrid.innerHTML += productHTML;
-            }
-        });
+        function renderGrid(data) {
+            const grids = {
+                nafaka: document.getElementById('product-list-nafaka'),
+                vinywaji: document.getElementById('product-list-vinywaji'),
+                mengineyo: document.getElementById('product-list-mengineyo')
+            };
+            const noRes = document.getElementById('no-results');
+            
+            // 1. Clear all sections
+            Object.values(grids).forEach(g => { if(g) g.innerHTML = ''; });
+            
+            if (!data || data.length === 0) {
+                noRes.classList.remove('hidden');
+                return;
+            } 
+            noRes.classList.add('hidden');
 
-        // Hide section headers if they are empty (during search/filter)
-        essentialGrid.previousElementSibling.style.display = essentialGrid.innerHTML === '' ? 'none' : 'block';
-        othersGrid.previousElementSibling.style.display = othersGrid.innerHTML === '' ? 'none' : 'block';
-    }
+            // 2. Determine limits: Mobile (6) vs Desktop (10)
+            const limit = window.innerWidth < 768 ? 6 : 10;
 
+            // 3. Filter data into 3 groups
+            const categorized = {
+                nafaka: data.filter(p => ['Grains', 'Oils', 'Pasta', 'Nafaka'].includes(p.category)),
+                vinywaji: data.filter(p => ['Drinks', 'Vinywaji', 'Soda'].includes(p.category)),
+                mengineyo: data.filter(p => !['Grains', 'Oils', 'Pasta', 'Nafaka', 'Drinks', 'Vinywaji', 'Soda'].includes(p.category))
+            };
+
+            // 4. Render each group
+            Object.keys(categorized).forEach(key => {
+                const list = categorized[key];
+                const grid = grids[key];
+                const btn = document.getElementById(`btn-${key}`);
+                
+                if (!grid) return;
+
+                // Show full list if expanded, otherwise show limited slice
+                const itemsToShow = expandedSections[key] ? list : list.slice(0, limit);
+
+                itemsToShow.forEach(p => {
+                    grid.innerHTML += `
+                        <div class="border border-gray-200 rounded-sm hover:shadow-lg transition-all cursor-pointer flex flex-col group bg-white" onclick="openProduct('${p.id}')">
+                            <div class="w-full h-48 bg-gray-50 flex items-center justify-center overflow-hidden p-2 relative">
+                                <img src="${p.img}" onerror="this.src='https://via.placeholder.com/400?text=Product'" class="max-w-full max-h-full object-contain group-hover:scale-105 transition duration-300">
+                                <span class="absolute top-2 left-2 bg-white/90 text-black text-[9px] px-2 py-0.5 font-bold rounded shadow-sm border border-gray-100 uppercase tracking-tighter">ID: ${p.id}</span>
+                            </div>
+                            <div class="p-3 border-t border-gray-50">
+                                <p class="text-[10px] font-bold text-blue-600 uppercase tracking-tight mb-0.5">${p.brand || 'SIMBA'}</p>
+                                <h4 class="font-bold text-gray-900 text-sm leading-tight h-10 line-clamp-2">${p.name}</h4>
+                                <div class="mt-2 flex items-center justify-between">
+                                    <p class="text-red-600 font-extrabold text-sm">Tsh ${p.price.toLocaleString()}</p>
+                                    <span class="text-[10px] text-gray-400 font-bold uppercase tracking-widest">${p.category}</span>
+                                </div>
+                            </div>
+                        </div>`;
+                });
+
+                // 5. Show button only if there are more items than the limit
+                if (btn) {
+                    btn.classList.toggle('hidden', list.length <= limit || expandedSections[key]);
+                }
+                
+                // Hide the whole section if it has 0 items (useful for search)
+                grid.parentElement.style.display = list.length === 0 ? 'none' : 'block';
+            });
+        }
+
+        // Function triggered by the button click
+        function expandSection(sectionKey) {
+            expandedSections[sectionKey] = true;
+            // Assuming your main products array is named 'allProducts' or similar
+            renderGrid(typeof currentFilteredData !== 'undefined' ? currentFilteredData : allProducts);
+        }
         function filterProducts() {
             const query = document.getElementById('product-search').value.toLowerCase();
             const filtered = products.filter(p => 
@@ -534,7 +566,7 @@
             updateCartUI();
         }
 
-        function updateCartUI() {
+    function updateCartUI() {
     const trigger = document.getElementById('cart-trigger');
     const countEl = document.getElementById('cart-count');
     const itemsEl = document.getElementById('cart-items');
