@@ -4,12 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Simba Express | Duka lako, jukumu letu.</title>
-     <link rel="icon" type="image/png" href="/favicon/favicon.png">
+    <link rel="icon" type="image/png" href="/favicon/Simba Favicon 2.jpeg">
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         body { font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; scroll-behavior: smooth; }
         .hero-bg {
-            background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('https://images.unsplash.com/photo-1534452203293-494d7ddbf7e0?auto=format&fit=crop&w=1200&q=80');
+            background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('favicon/Simba\ banner\ sample.jpeg');
             background-size: cover; background-position: center;
         }
         .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 100; align-items: center; justify-content: center; padding: 1rem; }
@@ -93,22 +93,35 @@
 </head>
 <body class="bg-white text-gray-900">
 
-    <nav class="flex justify-between items-center px-6 py-4 border-b sticky top-0 bg-white z-50">
-        <div class="flex items-center gap-2 cursor-pointer" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
-            <span class="text-red-600 text-2xl">🚚</span>
-            <span class="text-xl font-bold tracking-tighter uppercase">Simba <span class="text-red-600">Express</span></span>
+   <nav class="fixed top-0 left-0 right-0 bg-white border-b z-50 shadow-sm">
+    <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between w-full">
+        <div class="flex items-center">
+            <img src="/favicon/simba_croped2_cropped.png" alt="Logo" class="h-10 w-auto">
         </div>
-        <div class="space-x-4 text-[10px] font-bold text-blue-500 uppercase tracking-widest">
-            <button onclick="openPopup('about-modal')">KUHUSU</button> | 
-            <button onclick="openPopup('contact-modal')">MAWASILIANO</button>
+        <div class="flex items-center space-x-4 text-[11px] font-black uppercase">
+            <button onclick="openPopup('about-modal')" style="color: #E60000;">KUHUSU</button> 
+            <span class="text-gray-300">|</span> 
+            <button onclick="openPopup('contact-modal')" style="color: #E60000;">MAWASILIANO</button>
         </div>
-    </nav>
+    </div>
 
-    <header class="hero-bg h-80 flex flex-col items-center justify-center text-white text-center px-4">
-        <h1 class="text-4xl font-bold mb-2">Duka lako, jukumu letu.</h1>
-        <h2 class="text-2xl font-light mb-4 text-white italic">Mzigo Unafika Ndani ya Dakika 30 - 60</h2>
-        <div class="bg-white/10 backdrop-blur-sm px-6 py-2 rounded">
-            <p class="text-xl font-semibold">Usafiri ni Tsh 5,000 tu Popote Dar</p>
+   
+</nav>
+
+<div class="h-20"></div>
+
+    <header class="hero-bg min-h-[450px] lg:min-h-[650px] flex flex-col items-center justify-center text-white text-center px-4 pt-44 lg:pt-52 pb-12">
+        <div class="max-w-4xl mx-auto">
+            <h1 class="text-4xl lg:text-6xl font-black mb-4 drop-shadow-2xl">
+                Duka lako, jukumu letu.
+            </h1>
+            <h2 class="text-xl lg:text-3xl font-light mb-8 text-white italic drop-shadow-lg">
+                Mzigo Unafika Ndani ya Dakika 60
+            </h2>
+            
+            <div class="inline-block bg-white/10 backdrop-blur-md px-8 py-3 rounded-full border border-white/20 shadow-xl">
+                <p class="text-xl lg:text-2xl font-bold">Usafiri ni Tsh 5,000 tu Popote Dar</p>
+            </div>
         </div>
     </header>
 
@@ -155,14 +168,45 @@
     </div>
 
     <section class="max-w-xl mx-auto -mt-12 bg-white border shadow-2xl p-6 relative z-10 text-center rounded-sm">
-        <h4 class="text-[20px] text-gray-400 font-bold uppercase tracking-widest mb-6">Jinsi Tunavyofanya Kazi</h4>
-        <div class="grid grid-cols-3 gap-2 mb-6 border-b pb-6">
-            <div><p class="text-red-600 font-bold">1</p><p class="text-[15px] uppercase font-bold">Chagua Bidhaa</p></div>
-            <div><p class="text-red-600 font-bold">2</p><p class="text-[15px] uppercase font-bold">Hakiki Oda Yako </p></div>
-            <div><p class="text-red-600 font-bold">3</p><p class="text-[15px] uppercase font-bold">Pokea Oda Yako</p></div>
+        <h4 class="text-[20px] text-black-900 font-bold uppercase tracking-widest mb-6">Jinsi Tunavyofanya Kazi</h4>
+       <div class="grid grid-cols-3 gap-2 mb-6 border-b pb-8 text-center">
+            <div class="flex flex-col items-center">
+                <p class="text-red-600 font-black text-lg">1</p>
+                <div class="text-2xl my-1">
+                    <p class="text-[10px] md:text-[12px] uppercase font-black leading-tight">Chagua Bidhaa</p>
+                    🛒</div> 
+            </div>
+
+            <div class="flex flex-col items-center">
+                <p class="text-red-600 font-black text-lg">2</p>
+                <div class="text-2xl my-1">
+                    <p class="text-[10px] md:text-[12px] uppercase font-black leading-tight">Hakiki Oda Yako</p>
+                    📋</div> 
+            </div>
+
+            <div class="flex flex-col items-center">
+                <p class="text-red-600 font-black text-lg">3</p>
+                <div class="text-2xl my-1">
+                    <p class="text-[10px] md:text-[12px] uppercase font-black leading-tight">Pokea Oda Yako</p>
+                    📦</div> 
+            </div>
         </div>
-        <p class="text-sm font-bold text-gray-700">Weka oda kwa simu: <span class="text-red-600 font-bold">+255 685 636 220</span></p>
-        
+
+<div class="mt-6 mb-8 text-center sm:text-left">
+    <p class="text-xs font-black text-black-900 uppercase tracking-[0.2em] mb-2">
+        Weka oda kwa simu sasa:
+    </p>
+    
+    <a href="tel:+255685636220" 
+       class="inline-block text-3xl md:text-5xl font-black text-red-600 tracking-tighter hover:scale-105 transition-transform active:opacity-70">
+        +255 685 636 220
+    </a>
+
+    <div class="flex items-center justify-center sm:justify-start gap-2 mt-2 text-blue-600 font-bold text-[10px] uppercase tracking-widest">
+        <span class="animate-ping inline-flex h-2 w-2 rounded-full bg-blue-400 opacity-75"></span>
+        Bofya namba hapo juu kupiga simu
+    </div>
+</div>        
     </section>
 
     <section class="container mx-auto mt-12 px-4 max-w-6xl">
@@ -232,7 +276,7 @@
     <section class="py-12 bg-white">
     <div class="container mx-auto px-4">
         <p class="text-[20px] text-center font-bold text-black uppercase tracking-widest mb-10">
-            Tunakuletetia Bidhaa za Uhakika Kutoka Kwa:
+            Chanzo rasmi cha bidhaa za uhakika kutoka kwa:
         </p>
         
         <div class="grid grid-cols-2 md:grid-cols-6 gap-8 md:gap-10 items-center justify-items-center">
@@ -245,14 +289,14 @@
         </div>
         
         <p class="text-center text-[15px] font-bold text-black mt-10 italic uppercase">
-            Bei Ya Sokoni, Bidhaa Zote Ni Za Jumla!
+            Bidhaa zote za jumla kwa bei halisi ya sokoni.
         </p>
     </div>
 </section>
 
     <div id="cart-trigger" class="fixed bottom-6 right-6 hidden z-40">
         <button onclick="openPopup('cart-modal')" class="bg-red-600 text-white px-8 py-4 rounded-full shadow-2xl font-bold flex items-center gap-3 hover:scale-105 transition transform">
-            <span class="uppercase text-xs tracking-widest">View Order</span>
+            <span class="uppercase text-xs tracking-widest">Tazama Oda</span>
             <span id="cart-count" class="bg-white text-red-600 px-2 rounded-full text-xs">0</span>
         </button>
     </div>
@@ -279,7 +323,7 @@
                     <button onclick="changeQty(1)" class="px-5 py-3 bg-gray-50 hover:bg-gray-200 font-bold transition">+</button>
                 </div>
                 <button onclick="confirmAddToCart()" class="bg-red-600 text-white px-8 py-4 font-bold rounded-sm uppercase text-xs tracking-widest shadow-lg hover:bg-red-700 transition transform active:scale-95">
-                    Add to Order
+                    Weka kwenye Oda
                 </button>
             </div>
         </div>
