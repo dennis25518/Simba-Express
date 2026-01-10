@@ -101,7 +101,7 @@
             <div class="flex items-center space-x-4 text-[11px] font-black uppercase">
                 <button onclick="openPopup('about-modal')" style="color: #E60000;">KUHUSU</button> 
                 <span class="text-gray-300">|</span> 
-                <button onclick="openPopup('contact-modal')" style="color: #E60000;">MASAADA</button>
+                <button onclick="openPopup('contact-modal')" style="color: #E60000;">MSAADA</button>
             </div>
         </div>
    </nav>
@@ -422,16 +422,61 @@
 
     <script>
         const products = [
-            { id: "Az-01", brand: "Azam", name: "Azam Cola", price: 4200, category: "Drinks", desc: "12 Pack x 1.5L. Pure drinking water.", img: "drinks/AZAM-COLA-CROPPED.png" },
-            { id: "AZ-02", brand: "Azam", name: "Nazi Ya Packet", price: 2000, category: "Grains", desc: "12 Pack x 1.5L. Pure drinking water.", img: "grain/AZAM COCONUT CREAM.png" },
-            { id: "J-03", brand: "Azam", name: "Maji ya Uhai", price: 4200, category: "Drinks", desc: "12 Pack x 1.5L. Pure drinking water.", img: "drinks/Uhai1l.jpg" },
-            { id: "A-04", brand: "Azam", name: "Azam  PPF ", price: 2100, category: "Pasta", desc: "Wholesale box of 40 individual packs.", img: "grain/Azam-PPF-1.png" },
-            { id: "M-05", brand: "Azam", name: "Unga wa Ngano", price: 30000, category: "Grains", desc: "Grade 1 Morogoro aromatic rice. 25kg sack.", img: "grain/HomeBakingFlour.jpg" },
-            { id: "S-06", brand: "Azam", name: "Afiya Juice Case", price: 18000, category: "Drinks", desc: "Assorted flavors, 24 units per box.", img: "grain/AZAM-MARIE-GINGER.png" },
-            { id: "S-07", brand: "Asas", name: "Maziwa ya Asas", price: 11000, category: "Grains", desc: "Box la Maziwa ya Mtindi kutoka Asas.", img: "grain/ASAS MILK.png" },
-            { id: "S-08", brand: "Redgold", name: "Redgold Tomato Sauce", price: 18000, category: "Grains", desc: "Box la Tomato Sauce za Redgold.", img: "grain/REDGOLD SAUCE.jpg" },
-            { id: "S-09", brand: "Shwari", name: "Shwari Toilet Paper", price: 10000, category: "Others", desc: "Box la toilet paper za shwari.", img: "other/SHWARI TOILET PAPER.png" },
+         
+            /* Nafaka na Chakula */
+
+            { id: "AS-01", brand: "Asas", name: "Maziwa ya Asas", price: 15000, category: "Oils", desc: "Boxi la Maziwa ya Asas.", img: "grain/ASAS_MILK-removebg.png" },
+            { id: "Az-011", brand: "Azam", name: "Nazi ya Azam", price: 15000, category: "Oils", desc: "Boxi ya Nazi ya Azam", img: "grain/AZAM_COCONUT_CREAM-removebg.png" },
+            { id: "Az-012", brand: "Azam", name: "Bisuit za Azam", price: 15000, category: "Oils", desc: "Boxi la Biscuit za Azam", img: "grain/AZAM-MARIE-GINGER-removebg.png" },
+            { id: "Az-013", brand: "Azam", name: "Unga wa PPf-1", price: 15000, category: "Oils", desc: "Unga wa PPF - 1", img: "grain/Azam-PPF-1.png" },
+            { id: "Kr-10", brand: "Korie", name: "Mafuta ya Korie", price: 15000, category: "Oils", desc: "Mafuta ya kula ya lita 1", img: "grain/Korie Cooking Oil 900Ml.webp" },
+            { id: "Kr-10", brand: "Korie", name: "Mafuta ya Korie", price: 15000, category: "Oils", desc: "Mafuta ya kula ya lita 20", img: "grain/Korie Cooking.webp" },
+            { id: "S-10", brand: "Singida", name: "Mafuta ya Kula", price: 15000, category: "Oils", desc: "Mafuta ya kula ya lita 5", img: "grain/SINGIDA_COOKING_OIL-removebg.png" },
+            { id: "Mo-10", brand: "Mo", name: "Tambi za Mo", price: 15000, category: "Oils", desc: "Boxi La Tambi za Mo", img: "grain/mospagheti-removebg.png" },
+            { id: "Rg-10", brand: "Redgold", name: "Redgold Tomato Sauce", price: 15000, category: "Oils", desc: "Boxi la Redgold Tomato Sauce", img: "grain/tomatopaste70g-removebg.png" },
+            { id: "Rg-10", brand: "Redgold", name: "Redgold Tomato Paste", price: 15000, category: "Oils", desc: "Boxi la Redgold Tomato Paste", img: "grain/redgold-tomato-removebg.png" },
             { id: "S-10", brand: "Singida", name: "Mafuta ya Kula", price: 15000, category: "Oils", desc: "Mafuta ya kula ya lita 5", img: "oil/SINGIDA COOKING OIL.jpg" },
+            { id: "S-10", brand: "Singida", name: "Mafuta ya Kula", price: 15000, category: "Oils", desc: "Mafuta ya kula ya lita 5", img: "oil/SINGIDA COOKING OIL.jpg" },
+            { id: "S-10", brand: "Singida", name: "Mafuta ya Kula", price: 15000, category: "Oils", desc: "Mafuta ya kula ya lita 5", img: "oil/SINGIDA COOKING OIL.jpg" },
+            { id: "S-10", brand: "Singida", name: "Mafuta ya Kula", price: 15000, category: "Oils", desc: "Mafuta ya kula ya lita 5", img: "oil/SINGIDA COOKING OIL.jpg" },
+
+                
+           
+            /* Vinywaji */
+
+            { id: "MO-01", brand: "METL", name: "Mo Cola", price: 4200, category: "Drinks", desc: "Katoni ya Soda ya Mo Cola. Ujazo 300Ml. Idadi 12", img: "drinks/mocola-1-removebg-preview.png" },
+            { id: "MO-02", brand: "METL", name: "Mo xtra", price: 4200, category: "Drinks", desc: "Katoni ya Energy drink ya Mo. Ujazo 300Ml. Idadi 12", img: "drinks/moextra1-removebg.png" },
+            { id: "MO-03", brand: "METL", name: "Mo Chungwa", price: 4200, category: "Drinks", desc: "Katoni ya Juisi ya Mo Chungwa. Ujazo 300Ml. Idadi 12", img: "drinks/moorange-removebg.png" },
+            { id: "MO-04", brand: "METL", name: "Mo Passion", price: 4200, category: "Drinks", desc: "Katoni ya Juisi ya Mo Passion. Ujazo 300Ml. Idadi 12", img: "drinks/mopassion-removebg.png" },
+            { id: "Az-01", brand: "Azam", name: "Azam Cola", price: 4200, category: "Drinks", desc: "Pure drinking water. Ujazo 300Ml. Idadi 12", img: "drinks/AZAM-COLA-CROPPED.png" },
+            { id: "Az-02", brand: "Azam", name: "Azam Energy", price: 4200, category: "Drinks", desc: "Katoni ya Juisi ya Azam Energy. Ujazo 300Ml. Idadi 12", img: "drinks/azam_energy-removebg.png" },
+            { id: "Az-03", brand: "Azam", name: "Azam Apple Punch", price: 4200, category: "Drinks", desc: "Katoni ya juisi ya Apple Punch. Ujazo 300Ml. Idadi 12", img: "drinks/Azam-Apple-Punch-300ml-removebg.png" },
+            { id: "Az-04", brand: "Azam", name: "Azam Embe", price: 4200, category: "Drinks", desc: "Katoni ya juisi ya Azam Embe. Ujazo 300Ml. Idadi 12", img: "drinks/Azam-Mango-1Litre-removebg.png" },
+            { id: "Az-05", brand: "Azam", name: "Azam Max", price: 4200, category: "Drinks", desc: "Katoni ya juisi ya Azam Max. Ujazo 300Ml. Idadi 12", img: "drinks/AZAM-MAX2.png" },
+            { id: "Az-06", brand: "Azam", name: "Azam Swiss", price: 4200, category: "Drinks", desc: "Katoni ya juisi ya Azam Swiss. Ujazo 300Ml. Idadi 12", img: "drinks/Swiss-New-removebg.png" },
+            { id: "AF-01", brand: "Afia", name: "Afiya Strawberry", price: 4200, category: "Drinks", desc: "Katoni ya juisi ya Afiya Nyeusi. Ujazo 300Ml. Idadi 12", img: "drinks/afyablack-removebg.png" },
+            { id: "AF-02", brand: "Afiya", name: "Afiya Orange", price: 4200, category: "Drinks", desc: "Katoni ya juisi ya Afiya Orange. Ujazo 300Ml. Idadi 12", img: "drinks/afyaorange-removebg.png" },
+            { id: "AF-03", brand: "Afiya", name: "Afiya Passion", price: 4200, category: "Drinks", desc: "Katoni ya juisi ya Afiya Passion. Ujazo 300Ml. Idadi 12", img: "drinks/afyapasion-removebg.png" },
+            { id: "AF-04", brand: "Afiya", name: "Afiya Malta", price: 4200, category: "Drinks", desc: "Katoni ya juisi ya Afiya Malta. Ujazo 300Ml. Idadi 12", img: "drinks/afyamalta-removebg.png" },
+            { id: "AF-05", brand: "Afiya", name: "Afiya Pineapple", price: 4200, category: "Drinks", desc: "Katoni ya juisi ya Afiya Pineapple. Ujazo 300Ml. Idadi 12", img: "drinks/afiyapineapple-removebg.png" },
+            
+            /* Mengineyo */
+
+            { id: "SH-09", brand: "Shwari", name: "Shwari Toilet Paper", price: 10000, category: "Others", desc: "Box la toilet paper za shwari.", img: "other/SHWARI_TOILET_PAPER-removebg.png" },
+            { id: "Mo-01", brand: "Mo", name: "Mo Taifa Blue", price: 10000, category: "Others", desc: "Box la Sabuni za Mo za Unga.", img: "other/motaifablue-removebg.png" },
+            { id: "Mo-02", brand: "Mo", name: "Mo Taifa Yellow", price: 10000, category: "Others", desc: "Box la Sabuni za Mo za Unga.", img: "other/motaifayellow-removebg.png" },
+            { id: "Mo-03", brand: "Mo", name: "Mo Halisi Red", price: 10000, category: "Others", desc: "Box la Sabuni za Mo za Unga.", img: "other/mohalisi1-removebg.png" },
+            { id: "Mo-04", brand: "Mo", name: "Mo soap", price: 10000, category: "Others", desc: "Box la sabuni ya Kuogea.", img: "other/mosoap-removebg.png" },
+            { id: "SF-01", brand: "Softcare", name: "Softcare Diaper", price: 10000, category: "Others", desc: "Box la Softcare Diapersi.", img: "other/SOFTCARE_DIAPERS-removebg.png" },
+            { id: "SF-09", brand: "Softcare", name: "Softcare Pads", price: 10000, category: "Others", desc: "Box la Softcare Pads.", img: "other/SOFTCARE_PADS-removebg.png" },
+            { id: "Mk-01", brand: "Mk", name: "Mosquito King", price: 10000, category: "Others", desc: "Box la dawa ya Mbu.", img: "other/dawayambuuu-removebg.png" },
+            { id: "Df-01", brand: "Doffi", name: "Doffi Yellow", price: 10000, category: "Others", desc: "Box la Doffi Yellow.", img: "other/doffiyellow-removebg.png" },
+            { id: "Df-02", brand: "Doffi", name: "Doffi Pink", price: 10000, category: "Others", desc: "Box la Doffi Pink", img: "other/doffipink-removebg.png" },
+            { id: "Ks-09", brand: "Kleesoft", name: "Sabuni Ya Kleesoft", price: 10000, category: "Others", desc: "Box la Sabuni ya Kleesoft.", img: "other/Kleesoft-removebg.png" },
+            { id: "Nc-09", brand: "Niceone", name: "Sabuni Ya Niceone", price: 10000, category: "Others", desc: "Box la Sabuni ya Niceone.", img: "other/niceone-removebg.png" },
+            { id: "An-01", brand: "Azania", name: "Sabuni ya Marhaba", price: 10000, category: "Others", desc: "Box la Sabuni ya Marhaba.", img: "other/Marhaba-removebg.png" },
+            { id: "Vv-01", brand: "Viva", name: "Viva Tissue Paper", price: 10000, category: "Others", desc: "Box la Tissue paper za Viva.", img: "other/vivasoft-removebg.png" },
+            { id: "Jm-01", brand: "Jamaa", name: "Sabuni ya Jamaa", price: 10000, category: "Others", desc: "Box la Miche ya Jamaa.", img: "other/sabuniyajamaa-removebg.png" },
 
         ];
 
@@ -441,81 +486,105 @@
 
         let isExpanded = { essentials: false, others: false };
 
-       // Global state to track which sections are expanded
-       let expandedSections = { nafaka: false, vinywaji: false, mengineyo: false };
+      
 
-        function renderGrid(data) {
-            const grids = {
-                nafaka: document.getElementById('product-list-nafaka'),
-                vinywaji: document.getElementById('product-list-vinywaji'),
-                mengineyo: document.getElementById('product-list-mengineyo')
-            };
-            const noRes = document.getElementById('no-results');
-            
-            // 1. Clear all sections
-            Object.values(grids).forEach(g => { if(g) g.innerHTML = ''; });
-            
-            if (!data || data.length === 0) {
-                noRes.classList.remove('hidden');
-                return;
-            } 
-            noRes.classList.add('hidden');
+       // Keep track of section states
+let expandedSections = { nafaka: false, vinywaji: false, mengineyo: false };
 
-            // 2. Determine limits: Mobile (6) vs Desktop (10)
-            const limit = window.innerWidth < 768 ? 6 : 10;
+function renderGrid(data) {
+    // Store current data globally so buttons can access it
+    window.lastRenderedData = data;
 
-            // 3. Filter data into 3 groups
-            const categorized = {
-                nafaka: data.filter(p => ['Grains', 'Oils', 'Pasta', 'Nafaka'].includes(p.category)),
-                vinywaji: data.filter(p => ['Drinks', 'Vinywaji', 'Soda'].includes(p.category)),
-                mengineyo: data.filter(p => !['Grains', 'Oils', 'Pasta', 'Nafaka', 'Drinks', 'Vinywaji', 'Soda'].includes(p.category))
-            };
+    const grids = {
+        nafaka: document.getElementById('product-list-nafaka'),
+        vinywaji: document.getElementById('product-list-vinywaji'),
+        mengineyo: document.getElementById('product-list-mengineyo')
+    };
+    const noRes = document.getElementById('no-results');
+    
+    Object.values(grids).forEach(g => { if(g) g.innerHTML = ''; });
+    
+    if (!data || data.length === 0) {
+        noRes.classList.remove('hidden');
+        return;
+    } 
+    noRes.classList.add('hidden');
 
-            // 4. Render each group
-            Object.keys(categorized).forEach(key => {
-                const list = categorized[key];
-                const grid = grids[key];
-                const btn = document.getElementById(`btn-${key}`);
-                
-                if (!grid) return;
+    const limit = window.innerWidth < 768 ? 6 : 10;
 
-                // Show full list if expanded, otherwise show limited slice
-                const itemsToShow = expandedSections[key] ? list : list.slice(0, limit);
+    const categorized = {
+        nafaka: data.filter(p => ['Grains', 'Oils', 'Pasta', 'Nafaka'].includes(p.category)),
+        vinywaji: data.filter(p => ['Drinks', 'Vinywaji', 'Soda'].includes(p.category)),
+        mengineyo: data.filter(p => !['Grains', 'Oils', 'Pasta', 'Nafaka', 'Drinks', 'Vinywaji', 'Soda'].includes(p.category))
+    };
 
-                itemsToShow.forEach(p => {
-                    grid.innerHTML += `
-                        <div class="border border-gray-200 rounded-sm hover:shadow-lg transition-all cursor-pointer flex flex-col group bg-white" onclick="openProduct('${p.id}')">
-                            <div class="w-full h-48 bg-gray-50 flex items-center justify-center overflow-hidden p-2 relative">
-                                <img src="${p.img}" onerror="this.src='https://via.placeholder.com/400?text=Product'" class="max-w-full max-h-full object-contain group-hover:scale-105 transition duration-300">
-                                <span class="absolute top-2 left-2 bg-white/90 text-black text-[9px] px-2 py-0.5 font-bold rounded shadow-sm border border-gray-100 uppercase tracking-tighter">ID: ${p.id}</span>
-                            </div>
-                            <div class="p-3 border-t border-gray-50">
-                                <p class="text-[10px] font-bold text-blue-600 uppercase tracking-tight mb-0.5">${p.brand || 'SIMBA'}</p>
-                                <h4 class="font-bold text-gray-900 text-sm leading-tight h-10 line-clamp-2">${p.name}</h4>
-                                <div class="mt-2 flex items-center justify-between">
-                                    <p class="text-red-600 font-extrabold text-sm">Tsh ${p.price.toLocaleString()}</p>
-                                    <span class="text-[10px] text-gray-400 font-bold uppercase tracking-widest">${p.category}</span>
-                                </div>
-                            </div>
-                        </div>`;
-                });
+    Object.keys(categorized).forEach(key => {
+        const list = categorized[key];
+        const grid = grids[key];
+        const btn = document.getElementById(`btn-${key}`);
+        
+        if (!grid) return;
 
-                // 5. Show button only if there are more items than the limit
-                if (btn) {
-                    btn.classList.toggle('hidden', list.length <= limit || expandedSections[key]);
+        const isExpanded = expandedSections[key];
+        const itemsToShow = isExpanded ? list : list.slice(0, limit);
+
+        itemsToShow.forEach(p => {
+            grid.innerHTML += `
+                <div class="border border-gray-200 rounded-sm hover:shadow-lg transition-all cursor-pointer flex flex-col group bg-white" onclick="openProduct('${p.id}')">
+                    <div class="w-full h-48 bg-gray-50 flex items-center justify-center overflow-hidden p-2 relative">
+                        <img src="${p.img}" onerror="this.src='https://via.placeholder.com/400?text=Product'" class="max-w-full max-h-full object-contain group-hover:scale-105 transition duration-300">
+                        <span class="absolute top-2 left-2 bg-white/90 text-black text-[9px] px-2 py-0.5 font-bold rounded shadow-sm border border-gray-100 uppercase tracking-tighter">ID: ${p.id}</span>
+                    </div>
+                    <div class="p-3 border-t border-gray-50">
+                        <p class="text-[10px] font-bold text-blue-600 uppercase tracking-tight mb-0.5">${p.brand || 'SIMBA'}</p>
+                        <h4 class="font-bold text-gray-900 text-sm leading-tight h-10 line-clamp-2">${p.name}</h4>
+                        <div class="mt-2 flex items-center justify-between">
+                            <p class="text-red-600 font-extrabold text-sm">Tsh ${p.price.toLocaleString()}</p>
+                            <span class="text-[10px] text-gray-400 font-bold uppercase tracking-widest">${p.category}</span>
+                        </div>
+                    </div>
+                </div>`;
+        });
+
+        // 5. REMODELED BUTTON LOGIC
+        if (btn) {
+            // Only show button if the list is longer than the limit
+            if (list.length > limit) {
+                btn.classList.remove('hidden');
+                if (isExpanded) {
+                    btn.innerText = "Tazama Chache";
+                    btn.setAttribute("onclick", `collapseSection('${key}')`);
+                    btn.classList.replace('bg-gray-100', 'bg-gray-800'); // Darker when expanded
+                    btn.classList.replace('text-gray-800', 'text-white');
+                } else {
+                    btn.innerText = "Tazama Zaidi";
+                    btn.setAttribute("onclick", `expandSection('${key}')`);
+                    btn.classList.replace('bg-gray-800', 'bg-gray-100');
+                    btn.classList.replace('text-white', 'text-gray-800');
                 }
-                
-                // Hide the whole section if it has 0 items (useful for search)
-                grid.parentElement.style.display = list.length === 0 ? 'none' : 'block';
-            });
+            } else {
+                btn.classList.add('hidden');
+            }
         }
+        
+        grid.parentElement.style.display = list.length === 0 ? 'none' : 'block';
+    });
+}
 
-        // Function triggered by the button click
-        function expandSection(sectionKey) {
-            expandedSections[sectionKey] = true;
-            // Assuming your main products array is named 'allProducts' or similar
-            renderGrid(typeof currentFilteredData !== 'undefined' ? currentFilteredData : allProducts);
-        }
+// Function to Expand
+function expandSection(key) {
+    expandedSections[key] = true;
+    renderGrid(window.lastRenderedData);
+}
+
+// Function to Collapse (Tazama Chache)
+function collapseSection(key) {
+    expandedSections[key] = false;
+    renderGrid(window.lastRenderedData);
+    
+    // Scroll back to the section header so the user isn't lost
+    document.getElementById(`btn-${key}`).parentElement.scrollIntoView({ behavior: 'smooth' });
+}
         function filterProducts() {
             const query = document.getElementById('product-search').value.toLowerCase();
             const filtered = products.filter(p => 
