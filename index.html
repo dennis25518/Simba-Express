@@ -659,69 +659,69 @@
         // Backup: Auto-insert all 44 products if database is empty
         async function initializeProductDatabase() {
             try {
-                console.log('🔧 Checking if database needs initialization...');
+                console.log('🔧 Initializing database with 44 products...');
                 
                 const allProducts = [
                     // Nafaka na Chakula (Food & Grains)
-                    { id: 'AS-01', brand: 'Asas', name: 'Maziwa ya Asas', price: 16000, category: 'Maziwa', desc: 'Boxi la Maziwa ya Asas.', img: 'grain/ASAS_MILK-removebg.png' },
-                    { id: 'Az-011', brand: 'Azam', name: 'Nazi ya Azam', price: 30000, category: 'Vyakula', desc: 'Boxi ya Nazi ya Azam', img: 'grain/AZAM_COCONUT_CREAM-removebg.png' },
-                    { id: 'Az-012', brand: 'Azam', name: 'Bisuit za Azam', price: 15000, category: 'Vyakula', desc: 'Boxi la Biscuit za Azam', img: 'grain/AZAM-MARIE-GINGER-removebg.png' },
-                    { id: 'Az-013', brand: 'Azam', name: 'Unga wa PPf', price: 21500, category: 'Unga', desc: 'Unga wa PPF - 1', img: 'grain/Azam-PPF-1.png' },
-                    { id: 'Kr-10', brand: 'Korie', name: 'Mafuta ya Korie', price: 29500, category: 'Vyakula', desc: 'Mafuta ya kula ya lita 1', img: 'grain/Korie Cooking Oil 900Ml.webp' },
-                    { id: 'Kr-11', brand: 'Korie', name: 'Mafuta ya Korie', price: 39000, category: 'Vyakula', desc: 'Mafuta ya kula ya lita 20', img: 'grain/Korie Cooking.webp' },
-                    { id: 'S-10', brand: 'Singida', name: 'Mafuta ya Kula', price: 30900, category: 'Vyakula', desc: 'Mafuta ya kula ya lita 5', img: 'grain/SINGIDA_COOKING_OIL-removebg.png' },
-                    { id: 'Mo-10', brand: 'Mo', name: 'Tambi za Mo', price: 23000, category: 'Vyakula', desc: 'Boxi La Tambi za Mo', img: 'grain/mospagheti-removebg.png' },
-                    { id: 'Rg-10', brand: 'Redgold', name: 'Redgold Tomato Sauce', price: 16000, category: 'Vyakula', desc: 'Boxi la Redgold Tomato Sauce', img: 'grain/tomatopaste70g-removebg.png' },
-                    { id: 'Rg-11', brand: 'Redgold', name: 'Redgold Tomato Paste', price: 13500, category: 'Vyakula', desc: 'Boxi la Redgold Tomato Paste', img: 'grain/redgold-tomato-removebg.png' },
-                    { id: 'S-11', brand: 'Singida', name: 'Mafuta ya Kula Lite', price: 15000, category: 'Vyakula', desc: 'Mafuta ya kula ya lita 5', img: 'oil/SINGIDA COOKING OIL.jpg' },
-                    { id: 'S-12', brand: 'Singida', name: 'Mafuta ya Kula Pro', price: 15000, category: 'Vyakula', desc: 'Mafuta ya kula ya lita 5', img: 'oil/SINGIDA COOKING OIL.jpg' },
-                    { id: 'S-13', brand: 'Singida', name: 'Mafuta ya Kula Plus', price: 15000, category: 'Vyakula', desc: 'Mafuta ya kula ya lita 5', img: 'oil/SINGIDA COOKING OIL.jpg' },
-                    { id: 'S-14', brand: 'Singida', name: 'Mafuta ya Kula Premium', price: 15000, category: 'Vyakula', desc: 'Mafuta ya kula ya lita 5', img: 'oil/SINGIDA COOKING OIL.jpg' },
+                    { id: 'AS-01', brand: 'Asas', name: 'Maziwa ya Asas', price: 16000, category: 'Maziwa', img: 'grain/ASAS_MILK-removebg.png' },
+                    { id: 'Az-011', brand: 'Azam', name: 'Nazi ya Azam', price: 30000, category: 'Vyakula', img: 'grain/AZAM_COCONUT_CREAM-removebg.png' },
+                    { id: 'Az-012', brand: 'Azam', name: 'Bisuit za Azam', price: 15000, category: 'Vyakula', img: 'grain/AZAM-MARIE-GINGER-removebg.png' },
+                    { id: 'Az-013', brand: 'Azam', name: 'Unga wa PPf', price: 21500, category: 'Unga', img: 'grain/Azam-PPF-1.png' },
+                    { id: 'Kr-10', brand: 'Korie', name: 'Mafuta ya Korie', price: 29500, category: 'Vyakula', img: 'grain/Korie Cooking Oil 900Ml.webp' },
+                    { id: 'Kr-11', brand: 'Korie', name: 'Mafuta ya Korie', price: 39000, category: 'Vyakula', img: 'grain/Korie Cooking.webp' },
+                    { id: 'S-10', brand: 'Singida', name: 'Mafuta ya Kula', price: 30900, category: 'Vyakula', img: 'grain/SINGIDA_COOKING_OIL-removebg.png' },
+                    { id: 'Mo-10', brand: 'Mo', name: 'Tambi za Mo', price: 23000, category: 'Vyakula', img: 'grain/mospagheti-removebg.png' },
+                    { id: 'Rg-10', brand: 'Redgold', name: 'Redgold Tomato Sauce', price: 16000, category: 'Vyakula', img: 'grain/tomatopaste70g-removebg.png' },
+                    { id: 'Rg-11', brand: 'Redgold', name: 'Redgold Tomato Paste', price: 13500, category: 'Vyakula', img: 'grain/redgold-tomato-removebg.png' },
+                    { id: 'S-11', brand: 'Singida', name: 'Mafuta ya Kula Lite', price: 15000, category: 'Vyakula', img: 'oil/SINGIDA COOKING OIL.jpg' },
+                    { id: 'S-12', brand: 'Singida', name: 'Mafuta ya Kula Pro', price: 15000, category: 'Vyakula', img: 'oil/SINGIDA COOKING OIL.jpg' },
+                    { id: 'S-13', brand: 'Singida', name: 'Mafuta ya Kula Plus', price: 15000, category: 'Vyakula', img: 'oil/SINGIDA COOKING OIL.jpg' },
+                    { id: 'S-14', brand: 'Singida', name: 'Mafuta ya Kula Premium', price: 15000, category: 'Vyakula', img: 'oil/SINGIDA COOKING OIL.jpg' },
                     // Vinywaji (Drinks)
-                    { id: 'MO-01', brand: 'METL', name: 'Mo Cola', price: 4700, category: 'Vinywaji', desc: 'Katoni ya Soda ya Mo Cola. Ujazo 300Ml. Idadi 12', img: 'drinks/mocola-1-removebg-preview.png' },
-                    { id: 'MO-02', brand: 'METL', name: 'Mo xtra', price: 4800, category: 'Vinywaji', desc: 'Katoni ya Energy drink ya Mo. Ujazo 300Ml. Idadi 12', img: 'drinks/moextra1-removebg.png' },
-                    { id: 'MO-03', brand: 'METL', name: 'Mo Chungwa', price: 4600, category: 'Vinywaji', desc: 'Katoni ya Juisi ya Mo Chungwa. Ujazo 300Ml. Idadi 12', img: 'drinks/moorange-removebg.png' },
-                    { id: 'MO-04', brand: 'METL', name: 'Mo Passion', price: 4800, category: 'Vinywaji', desc: 'Katoni ya Juisi ya Mo Passion. Ujazo 300Ml. Idadi 12', img: 'drinks/mopassion-removebg.png' },
-                    { id: 'Az-01', brand: 'Azam', name: 'Azam Cola', price: 9400, category: 'Pipi', desc: 'Azam Cola - Soda drink. Ujazo 300Ml. Idadi 12', img: 'drinks/AZAM-COLA-CROPPED.png' },
-                    { id: 'Az-02', brand: 'Azam', name: 'Azam Energy', price: 11950, category: 'Vinywaji', desc: 'Katoni ya Juisi ya Azam Energy. Ujazo 300Ml. Idadi 12', img: 'drinks/azam_energy-removebg.png' },
-                    { id: 'Az-03', brand: 'Azam', name: 'Azam Apple Punch', price: 9500, category: 'Vinywaji', desc: 'Katoni ya juisi ya Apple Punch. Ujazo 300Ml. Idadi 12', img: 'drinks/Azam-Apple-Punch-300ml-removebg.png' },
-                    { id: 'Az-04', brand: 'Azam', name: 'Azam Embe', price: 10700, category: 'Vinywaji', desc: 'Katoni ya juisi ya Azam Embe. Ujazo 300Ml. Idadi 12', img: 'drinks/Azam-Mango-1Litre-removebg.png' },
-                    { id: 'Az-05', brand: 'Azam', name: 'Azam Max', price: 9500, category: 'Vinywaji', desc: 'Katoni ya juisi ya Azam Max. Ujazo 300Ml. Idadi 12', img: 'drinks/AZAM-MAX2.png' },
-                    { id: 'Az-06', brand: 'Azam', name: 'Azam Swiss', price: 9500, category: 'Vinywaji', desc: 'Katoni ya juisi ya Azam Swiss. Ujazo 300Ml. Idadi 12', img: 'drinks/Swiss-New-removebg.png' },
-                    { id: 'AF-01', brand: 'Afia', name: 'Afiya Strawberry', price: 4600, category: 'Vinywaji', desc: 'Katoni ya juisi ya Afiya Nyeusi. Ujazo 300Ml. Idadi 12', img: 'drinks/afyablack-removebg.png' },
-                    { id: 'AF-02', brand: 'Afiya', name: 'Afiya Orange', price: 4600, category: 'Vinywaji', desc: 'Katoni ya juisi ya Afiya Orange. Ujazo 300Ml. Idadi 12', img: 'drinks/afyaorange-removebg.png' },
-                    { id: 'AF-03', brand: 'Afiya', name: 'Afiya Passion', price: 4600, category: 'Vinywaji', desc: 'Katoni ya juisi ya Afiya Passion. Ujazo 300Ml. Idadi 12', img: 'drinks/afyapasion-removebg.png' },
-                    { id: 'AF-04', brand: 'Afiya', name: 'Afiya Malta', price: 4600, category: 'Vinywaji', desc: 'Katoni ya juisi ya Afiya Malta. Ujazo 300Ml. Idadi 12', img: 'drinks/afyamalta-removebg.png' },
-                    { id: 'AF-05', brand: 'Afiya', name: 'Afiya Pineapple', price: 4600, category: 'Vinywaji', desc: 'Katoni ya juisi ya Afiya Pineapple. Ujazo 300Ml. Idadi 12', img: 'drinks/afiyapineapple-removebg.png' },
+                    { id: 'MO-01', brand: 'METL', name: 'Mo Cola', price: 4700, category: 'Vinywaji', img: 'drinks/mocola-1-removebg-preview.png' },
+                    { id: 'MO-02', brand: 'METL', name: 'Mo xtra', price: 4800, category: 'Vinywaji', img: 'drinks/moextra1-removebg.png' },
+                    { id: 'MO-03', brand: 'METL', name: 'Mo Chungwa', price: 4600, category: 'Vinywaji', img: 'drinks/moorange-removebg.png' },
+                    { id: 'MO-04', brand: 'METL', name: 'Mo Passion', price: 4800, category: 'Vinywaji', img: 'drinks/mopassion-removebg.png' },
+                    { id: 'Az-01', brand: 'Azam', name: 'Azam Cola', price: 9400, category: 'Pipi', img: 'drinks/AZAM-COLA-CROPPED.png' },
+                    { id: 'Az-02', brand: 'Azam', name: 'Azam Energy', price: 11950, category: 'Vinywaji', img: 'drinks/azam_energy-removebg.png' },
+                    { id: 'Az-03', brand: 'Azam', name: 'Azam Apple Punch', price: 9500, category: 'Vinywaji', img: 'drinks/Azam-Apple-Punch-300ml-removebg.png' },
+                    { id: 'Az-04', brand: 'Azam', name: 'Azam Embe', price: 10700, category: 'Vinywaji', img: 'drinks/Azam-Mango-1Litre-removebg.png' },
+                    { id: 'Az-05', brand: 'Azam', name: 'Azam Max', price: 9500, category: 'Vinywaji', img: 'drinks/AZAM-MAX2.png' },
+                    { id: 'Az-06', brand: 'Azam', name: 'Azam Swiss', price: 9500, category: 'Vinywaji', img: 'drinks/Swiss-New-removebg.png' },
+                    { id: 'AF-01', brand: 'Afia', name: 'Afiya Strawberry', price: 4600, category: 'Vinywaji', img: 'drinks/afyablack-removebg.png' },
+                    { id: 'AF-02', brand: 'Afiya', name: 'Afiya Orange', price: 4600, category: 'Vinywaji', img: 'drinks/afyaorange-removebg.png' },
+                    { id: 'AF-03', brand: 'Afiya', name: 'Afiya Passion', price: 4600, category: 'Vinywaji', img: 'drinks/afyapasion-removebg.png' },
+                    { id: 'AF-04', brand: 'Afiya', name: 'Afiya Malta', price: 4600, category: 'Vinywaji', img: 'drinks/afyamalta-removebg.png' },
+                    { id: 'AF-05', brand: 'Afiya', name: 'Afiya Pineapple', price: 4600, category: 'Vinywaji', img: 'drinks/afiyapineapple-removebg.png' },
                     // Mengineyo (Other)
-                    { id: 'SH-09', brand: 'Shwari', name: 'Shwari Toilet Paper', price: 10000, category: 'Usafi', desc: 'Box la toilet paper za shwari.', img: 'other/SHWARI_TOILET_PAPER-removebg.png' },
-                    { id: 'Mo-01-s', brand: 'Mo', name: 'Mo Taifa Blue', price: 10000, category: 'Usafi', desc: 'Box la Sabuni za Mo za Unga.', img: 'other/motaifablue-removebg.png' },
-                    { id: 'Mo-02-s', brand: 'Mo', name: 'Mo Taifa Yellow', price: 10000, category: 'Usafi', desc: 'Box la Sabuni za Mo za Unga.', img: 'other/motaifayellow-removebg.png' },
-                    { id: 'Mo-03-s', brand: 'Mo', name: 'Mo Halisi Red', price: 10000, category: 'Usafi', desc: 'Box la Sabuni za Mo za Unga.', img: 'other/mohalisi1-removebg.png' },
-                    { id: 'Mo-04-s', brand: 'Mo', name: 'Mo soap', price: 10000, category: 'Usafi', desc: 'Box la sabuni ya Kuogea.', img: 'other/mosoap-removebg.png' },
-                    { id: 'SF-01', brand: 'Softcare', name: 'Softcare Diaper', price: 10000, category: 'Watoto', desc: 'Box la Softcare Diapersi.', img: 'other/SOFTCARE_DIAPERS-removebg.png' },
-                    { id: 'SF-09', brand: 'Softcare', name: 'Softcare Pads', price: 34000, category: 'Afya', desc: 'Box la Softcare Pads.', img: 'other/SOFTCARE_PADS-removebg.png' },
-                    { id: 'Mk-01', brand: 'Mk', name: 'Mosquito King', price: 20650, category: 'Usafi', desc: 'Box la dawa ya Mbu.', img: 'other/dawayambuuu-removebg.png' },
-                    { id: 'Df-01', brand: 'Doffi', name: 'Doffi Yellow', price: 9850, category: 'Usafi', desc: 'Box la Doffi Yellow.', img: 'other/doffiyellow-removebg.png' },
-                    { id: 'Df-02', brand: 'Doffi', name: 'Doffi Pink', price: 9850, category: 'Usafi', desc: 'Box la Doffi Pink', img: 'other/doffipink-removebg.png' },
-                    { id: 'Ks-09', brand: 'Kleesoft', name: 'Sabuni Ya Kleesoft', price: 4150, category: 'Usafi', desc: 'Box la Sabuni ya Kleesoft.', img: 'other/Kleesoft-removebg.png' },
-                    { id: 'Nc-09', brand: 'Niceone', name: 'Sabuni Ya Niceone', price: 9700, category: 'Usafi', desc: 'Box la Sabuni ya Niceone.', img: 'other/niceone-removebg.png' },
-                    { id: 'An-01', brand: 'Azania', name: 'Sabuni ya Marhaba', price: 4300, category: 'Usafi', desc: 'Box la Sabuni ya Marhaba.', img: 'other/Marhaba-removebg.png' },
-                    { id: 'Vv-01', brand: 'Viva', name: 'Viva Tissue Paper', price: 10000, category: 'Usafi', desc: 'Box la Tissue paper za Viva.', img: 'other/vivasoft-removebg.png' },
-                    { id: 'Jm-01', brand: 'Jamaa', name: 'Sabuni ya Jamaa', price: 15150, category: 'Usafi', desc: 'Box la Miche ya Jamaa.', img: 'other/sabuniyajamaa-removebg.png' }
+                    { id: 'SH-09', brand: 'Shwari', name: 'Shwari Toilet Paper', price: 10000, category: 'Usafi', img: 'other/SHWARI_TOILET_PAPER-removebg.png' },
+                    { id: 'Mo-01-s', brand: 'Mo', name: 'Mo Taifa Blue', price: 10000, category: 'Usafi', img: 'other/motaifablue-removebg.png' },
+                    { id: 'Mo-02-s', brand: 'Mo', name: 'Mo Taifa Yellow', price: 10000, category: 'Usafi', img: 'other/motaifayellow-removebg.png' },
+                    { id: 'Mo-03-s', brand: 'Mo', name: 'Mo Halisi Red', price: 10000, category: 'Usafi', img: 'other/mohalisi1-removebg.png' },
+                    { id: 'Mo-04-s', brand: 'Mo', name: 'Mo soap', price: 10000, category: 'Usafi', img: 'other/mosoap-removebg.png' },
+                    { id: 'SF-01', brand: 'Softcare', name: 'Softcare Diaper', price: 10000, category: 'Watoto', img: 'other/SOFTCARE_DIAPERS-removebg.png' },
+                    { id: 'SF-09', brand: 'Softcare', name: 'Softcare Pads', price: 34000, category: 'Afya', img: 'other/SOFTCARE_PADS-removebg.png' },
+                    { id: 'Mk-01', brand: 'Mk', name: 'Mosquito King', price: 20650, category: 'Usafi', img: 'other/dawayambuuu-removebg.png' },
+                    { id: 'Df-01', brand: 'Doffi', name: 'Doffi Yellow', price: 9850, category: 'Usafi', img: 'other/doffiyellow-removebg.png' },
+                    { id: 'Df-02', brand: 'Doffi', name: 'Doffi Pink', price: 9850, category: 'Usafi', img: 'other/doffipink-removebg.png' },
+                    { id: 'Ks-09', brand: 'Kleesoft', name: 'Sabuni Ya Kleesoft', price: 4150, category: 'Usafi', img: 'other/Kleesoft-removebg.png' },
+                    { id: 'Nc-09', brand: 'Niceone', name: 'Sabuni Ya Niceone', price: 9700, category: 'Usafi', img: 'other/niceone-removebg.png' },
+                    { id: 'An-01', brand: 'Azania', name: 'Sabuni ya Marhaba', price: 4300, category: 'Usafi', img: 'other/Marhaba-removebg.png' },
+                    { id: 'Vv-01', brand: 'Viva', name: 'Viva Tissue Paper', price: 10000, category: 'Usafi', img: 'other/vivasoft-removebg.png' },
+                    { id: 'Jm-01', brand: 'Jamaa', name: 'Sabuni ya Jamaa', price: 15150, category: 'Usafi', img: 'other/sabuniyajamaa-removebg.png' }
                 ];
                 
-                // Insert all products
+                // Insert all products (without desc field since column doesn't exist yet)
                 const { error } = await supabaseClient
                     .from('products')
                     .insert(allProducts);
                     
                 if (error) {
-                    console.warn('⚠️ Could not initialize database:', error.message);
+                    console.warn('⚠️ Initialize error:', error.message);
                     return false;
                 }
                 
-                console.log('✅ Database initialized with 44 products');
+                console.log('✅ Database initialized with 44 products!');
                 return true;
                 
             } catch (error) {
