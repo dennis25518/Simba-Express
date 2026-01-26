@@ -703,6 +703,17 @@
         // ============================================
         // LOAD PRODUCTS FROM SUPABASE (FALLBACK TO LOCAL)
         // ============================================
+        
+        // Your Supabase project details
+        const SUPABASE_URL = 'https://cmsqvcqddnefquxzchxy.supabase.co';
+        const STORAGE_BUCKET = 'Web%20Products'; // URL encoded "Web Products"
+        
+        // Function to construct Supabase image URLs
+        function getSupabaseImageUrl(localImagePath) {
+            // Convert local path (e.g., "drinks/mocola.png") to full Supabase URL
+            return `${SUPABASE_URL}/storage/v1/object/public/${STORAGE_BUCKET}/${localImagePath}`;
+        }
+        
         async function loadProductsFromSupabase() {
             try {
                 console.log('Loading products from Supabase...');
@@ -711,15 +722,23 @@
                     .select('*');
                 
                 if (error) {
-                    console.warn('Error loading from database, using local products:', error);
+                    console.warn('No products table found, using local products with Supabase URLs:', error);
+                    // Fallback: convert local image paths to Supabase URLs
+                    products.forEach(product => {
+                        if (product.img && !product.img.startsWith('http')) {
+                            product.img = getSupabaseImageUrl(product.img);
+                        }
+                    });
                     return false;
                 }
                 
                 if (data && data.length > 0) {
                     // Replace local products with database products
-                    // Use image_url from database, fallback to img field
+                    // Use image_url from database, fallback to constructing from img field
                     products.length = 0;
                     data.forEach(product => {
+                        const imageUrl = product.image_url || 
+                                       (product.img ? getSupabaseImageUrl(product.img) : '');
                         products.push({
                             id: product.id,
                             brand: product.brand,
@@ -727,17 +746,29 @@
                             price: product.price,
                             category: product.category,
                             desc: product.desc || '',
-                            img: product.image_url || product.img || '' // Use database URL first
+                            img: imageUrl
                         });
                     });
-                    console.log('Successfully loaded', products.length, 'products from Supabase');
+                    console.log('Successfully loaded', products.length, 'products from Supabase database');
                     return true;
                 } else {
-                    console.log('No products in database, using local products');
+                    console.log('No products in database, using local products with Supabase URLs');
+                    // Fallback: convert local image paths to Supabase URLs
+                    products.forEach(product => {
+                        if (product.img && !product.img.startsWith('http')) {
+                            product.img = getSupabaseImageUrl(product.img);
+                        }
+                    });
                     return false;
                 }
             } catch (error) {
                 console.error('Failed to load products from Supabase:', error);
+                // Fallback: convert local image paths to Supabase URLs
+                products.forEach(product => {
+                    if (product.img && !product.img.startsWith('http')) {
+                        product.img = getSupabaseImageUrl(product.img);
+                    }
+                });
                 return false;
             }
         }
