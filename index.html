@@ -1420,7 +1420,18 @@ function collapseSection(key) {
         // User is logged in - show Supabase checkout
         checkoutContent.innerHTML = `
             <div class="space-y-3 mb-6">
-                <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Tafadhali thibitisha oda</p>
+                <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-3">Taarifa za Kufikia Kwa Inapo (Delivery)</p>
+            </div>
+
+            <div class="space-y-2 mb-4">
+                <input type="text" id="delivery-name" placeholder="Jina lako" 
+                    class="w-full border-2 border-gray-200 p-3 rounded-sm text-sm font-bold focus:border-red-600 outline-none transition-colors">
+                <input type="tel" id="delivery-phone" placeholder="Namba ya Simu (255...)" 
+                    class="w-full border-2 border-gray-200 p-3 rounded-sm text-sm font-bold focus:border-red-600 outline-none transition-colors">
+                <input type="text" id="delivery-address" placeholder="Mahali (Mtaa/Jengo/Balozi)" 
+                    class="w-full border-2 border-gray-200 p-3 rounded-sm text-sm font-bold focus:border-red-600 outline-none transition-colors">
+                <textarea id="delivery-notes" placeholder="Maelezo zaidi (Si lazima)" 
+                    class="w-full border-2 border-gray-200 p-3 rounded-sm text-sm font-bold focus:border-red-600 outline-none transition-colors" rows="2"></textarea>
             </div>
 
             <div class="space-y-2 mb-4 border-b-2 border-dashed pb-4">
@@ -1529,6 +1540,18 @@ function collapseSection(key) {
                 return;
             }
 
+            // Get delivery information
+            const deliveryName = document.getElementById('delivery-name').value.trim();
+            const deliveryPhone = document.getElementById('delivery-phone').value.trim();
+            const deliveryAddress = document.getElementById('delivery-address').value.trim();
+            const deliveryNotes = document.getElementById('delivery-notes').value.trim();
+
+            // Validate required fields
+            if (!deliveryName || !deliveryPhone || !deliveryAddress) {
+                alert('Tafadhali jaza: Jina, Namba ya Simu, na Mahali!');
+                return;
+            }
+
             try {
                 const subtotal = cart.reduce((s, i) => s + (i.price * i.qty), 0);
                 const deliveryFee = 5000;
@@ -1543,19 +1566,22 @@ function collapseSection(key) {
                     total_price: item.price * item.qty
                 }));
 
-                // Insert order into Supabase
+                // Insert order into Supabase with delivery info
                 const { data, error } = await supabaseClient
                     .from('orders')
                     .insert([{
                         user_id: currentUser.id,
                         user_email: currentUser.email,
+                        customer_name: deliveryName,
+                        customer_phone: deliveryPhone,
+                        delivery_address: deliveryAddress,
+                        delivery_notes: deliveryNotes,
                         order_items: orderItems,
                         subtotal: subtotal,
                         delivery_fee: deliveryFee,
                         total_amount: grandTotal,
                         order_status: 'pending',
                         created_at: new Date(),
-                        notes: ''
                     }]);
 
                 if (error) {
