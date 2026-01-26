@@ -1128,7 +1128,7 @@ function collapseSection(key) {
                     card.className = 'border border-gray-200 rounded-lg p-3 bg-white cursor-pointer hover:shadow-lg transition-shadow';
                     card.onclick = () => openProduct(product.id);
                     card.innerHTML = `
-                        <img src="${product.img}" alt="${product.name}" class="w-full h-32 object-cover rounded mb-2">
+                        <img src="${product.img}" alt="${product.name}" class="w-full h-32 object-contain rounded mb-2 bg-gray-50">
                         <h3 class="text-xs font-bold text-gray-900 line-clamp-1">${product.name}</h3>
                         <p class="text-[10px] text-gray-600 mb-2">${product.brand}</p>
                         <p class="text-red-600 font-black text-sm">TSH ${product.price.toLocaleString()}</p>
@@ -1173,7 +1173,7 @@ function collapseSection(key) {
                     card.className = 'border border-gray-200 rounded-lg p-3 bg-white cursor-pointer hover:shadow-lg transition-shadow';
                     card.onclick = () => openProduct(product.id);
                     card.innerHTML = `
-                        <img src="${product.img}" alt="${product.name}" class="w-full h-32 object-cover rounded mb-2">
+                        <img src="${product.img}" alt="${product.name}" class="w-full h-32 object-contain rounded mb-2 bg-gray-50">
                         <h3 class="text-xs font-bold text-gray-900 line-clamp-1">${product.name}</h3>
                         <p class="text-[10px] text-gray-600 mb-2">${product.brand}</p>
                         <p class="text-red-600 font-black text-sm">TSH ${product.price.toLocaleString()}</p>
