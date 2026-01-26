@@ -605,6 +605,7 @@
         // Load user profile picture and details
         async function loadUserProfile() {
             try {
+                console.log('Loading profile for user:', currentUser.id);
                 const { data, error } = await supabaseClient
                     .from('user_profiles')
                     .select('*')
@@ -612,23 +613,29 @@
                     .single();
 
                 if (error) {
-                    console.log('Profile not loaded:', error);
+                    console.warn('Profile not loaded:', error);
                     return;
                 }
 
                 if (data) {
+                    console.log('Profile loaded:', data);
                     currentUser.profile = data;
+                    
                     // Update navbar with profile picture if available
                     if (data.profile_picture_url) {
+                        console.log('Updating navbar with profile picture:', data.profile_picture_url);
                         const userBtn = document.getElementById('user-icon-btn');
                         if (userBtn) {
                             userBtn.innerHTML = `<img src="${data.profile_picture_url}" class="w-8 h-8 rounded-full object-cover border-2 border-red-600" alt="Profile">`;
                             userBtn.style.padding = '0';
+                            console.log('✅ Profile picture updated in navbar');
                         }
+                    } else {
+                        console.log('No profile picture URL found');
                     }
                 }
             } catch (error) {
-                console.log('Error loading profile:', error);
+                console.error('Error loading profile:', error);
             }
         }
 
@@ -742,19 +749,23 @@
                 let profilePictureUrl = null;
                 if (photoFile) {
                     try {
+                        console.log('Starting photo upload...');
                         const fileName = `${data.user.id}-${Date.now()}.jpg`;
+                        
                         const { data: uploadData, error: uploadError } = await supabaseClient.storage
                             .from('profile_pictures')
                             .upload(fileName, photoFile);
 
                         if (uploadError) {
-                            console.warn('Photo upload warning:', uploadError);
+                            console.warn('Photo upload error:', uploadError);
                             // Continue without photo
                         } else {
+                            console.log('Photo uploaded:', uploadData);
                             const { data: urlData } = supabaseClient.storage
                                 .from('profile_pictures')
                                 .getPublicUrl(fileName);
                             profilePictureUrl = urlData.publicUrl;
+                            console.log('Public URL generated:', profilePictureUrl);
                         }
                     } catch (photoError) {
                         console.warn('Photo upload issue:', photoError);
