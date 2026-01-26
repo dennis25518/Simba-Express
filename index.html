@@ -783,7 +783,21 @@
                         hint: dbError.hint,
                         code: dbError.code
                     });
-                    alert('Kosa katika kuhifadhi habari.\n\nDetailed error: ' + (dbError.message || 'Unknown error'));
+                    
+                    // Show detailed error to help debugging
+                    let errorMsg = 'Kosa katika kuhifadhi habari.\n\n';
+                    if (dbError.code === 'PGRST116') {
+                        errorMsg += 'Hitilafu: Jedwali user_profiles halijaumbuawa.\n\nTafadhali wasiliana na msaada.';
+                    } else if (dbError.message.includes('duplicate')) {
+                        errorMsg += 'Hitilafu: Barua pepe hii tayari imejisajili.\n\nJaribu kwa barua pepe nyingine.';
+                    } else if (dbError.message.includes('foreign key')) {
+                        errorMsg += 'Hitilafu: Tatizo la data integrity.\n\nTafadhali jaribu tena.';
+                    } else {
+                        errorMsg += dbError.message || 'Unknown error';
+                    }
+                    
+                    alert(errorMsg);
+                    console.error('Full error object:', dbError);
                     return;
                 }
 
