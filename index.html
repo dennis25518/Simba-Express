@@ -113,17 +113,69 @@
 
 <div class="h-20"></div>
 
-    <header class="hero-bg min-h-[450px] lg:min-h-[650px] flex flex-col items-center justify-center text-white text-center px-4 pt-44 lg:pt-52 pb-12">
-        <div class="max-w-4xl mx-auto">
-            <h1 class="text-4xl lg:text-6xl font-black mb-4 drop-shadow-2xl">
-                Duka lako, jukumu letu.
-            </h1>
-            <h2 class="text-xl lg:text-3xl font-light mb-8 text-white italic drop-shadow-lg">
-                Mzigo Unafika Ndani ya Dakika 60
-            </h2>
-            
-            <div class="inline-block bg-white/10 backdrop-blur-md px-8 py-3 rounded-full border border-white/20 shadow-xl">
-                <p class="text-xl lg:text-2xl font-bold">Usafiri ni Tsh 5,000 tu Popote Dar</p>
+    <header class="min-h-[450px] lg:min-h-[650px] text-white text-center px-4 pt-44 lg:pt-52 pb-12 relative">
+        <!-- Slider Container -->
+        <div class="relative max-w-4xl mx-auto">
+            <div class="relative overflow-hidden rounded-lg shadow-2xl">
+                <!-- Slide 1 -->
+                <div class="hero-slider-item active hero-bg min-h-[450px] lg:min-h-[650px] flex flex-col items-center justify-center transition-opacity duration-500" style="background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('favicon/Simba\ banner\ sample.jpeg'); background-size: cover; background-position: center;">
+                    <div class="max-w-4xl mx-auto">
+                        <h1 class="text-4xl lg:text-6xl font-black mb-4 drop-shadow-2xl">
+                            Duka lako, jukumu letu.
+                        </h1>
+                        <h2 class="text-xl lg:text-3xl font-light mb-8 text-white italic drop-shadow-lg">
+                            Mzigo Unafika Ndani ya Dakika 60
+                        </h2>
+                        <div class="inline-block bg-white/10 backdrop-blur-md px-8 py-3 rounded-full border border-white/20 shadow-xl">
+                            <p class="text-xl lg:text-2xl font-bold">Usafiri ni Tsh 5,000 tu Popote Dar</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Slide 2 -->
+                <div class="hero-slider-item hero-bg min-h-[450px] lg:min-h-[650px] flex flex-col items-center justify-center transition-opacity duration-500 hidden" style="background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('favicon/Simba\ banner\ sample.jpeg'); background-size: cover; background-position: center;">
+                    <div class="max-w-4xl mx-auto">
+                        <h1 class="text-4xl lg:text-6xl font-black mb-4 drop-shadow-2xl">
+                            Bidhaa Zote Zinakuja Kwako
+                        </h1>
+                        <h2 class="text-xl lg:text-3xl font-light mb-8 text-white italic drop-shadow-lg">
+                            Nguvu Nyingi, Bei Ndogo
+                        </h2>
+                        <div class="inline-block bg-white/10 backdrop-blur-md px-8 py-3 rounded-full border border-white/20 shadow-xl">
+                            <p class="text-xl lg:text-2xl font-bold">Zabuni Lako Imekamilika Haraka Haraka</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Slide 3 -->
+                <div class="hero-slider-item hero-bg min-h-[450px] lg:min-h-[650px] flex flex-col items-center justify-center transition-opacity duration-500 hidden" style="background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('favicon/Simba\ banner\ sample.jpeg'); background-size: cover; background-position: center;">
+                    <div class="max-w-4xl mx-auto">
+                        <h1 class="text-4xl lg:text-6xl font-black mb-4 drop-shadow-2xl">
+                            Karibu Kwa Simba Express
+                        </h1>
+                        <h2 class="text-xl lg:text-3xl font-light mb-8 text-white italic drop-shadow-lg">
+                            Huduma Bora, Wateja Jinga
+                        </h2>
+                        <div class="inline-block bg-white/10 backdrop-blur-md px-8 py-3 rounded-full border border-white/20 shadow-xl">
+                            <p class="text-xl lg:text-2xl font-bold">Tunajali Kwa Kile Unajitaka</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Slider Controls -->
+                <button onclick="prevSlide()" class="absolute left-4 top-1/2 transform -translate-y-1/2 bg-white/30 hover:bg-white/50 text-white p-3 rounded-full transition z-10">
+                    ❮
+                </button>
+                <button onclick="nextSlide()" class="absolute right-4 top-1/2 transform -translate-y-1/2 bg-white/30 hover:bg-white/50 text-white p-3 rounded-full transition z-10">
+                    ❯
+                </button>
+
+                <!-- Slider Indicators -->
+                <div class="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex gap-2 z-10">
+                    <button onclick="goToSlide(0)" class="slider-dot active w-3 h-3 rounded-full bg-white/70 hover:bg-white transition"></button>
+                    <button onclick="goToSlide(1)" class="slider-dot w-3 h-3 rounded-full bg-white/70 hover:bg-white transition"></button>
+                    <button onclick="goToSlide(2)" class="slider-dot w-3 h-3 rounded-full bg-white/70 hover:bg-white transition"></button>
+                </div>
             </div>
         </div>
     </header>
@@ -1484,12 +1536,66 @@ function collapseSection(key) {
     }, 3000);
 }
 
+        // Slider Functions
+        let currentSlide = 0;
+        const totalSlides = 3;
+        let autoSlideInterval;
+
+        function showSlide(n) {
+            const slides = document.querySelectorAll('.hero-slider-item');
+            const dots = document.querySelectorAll('.slider-dot');
+            
+            if (n >= totalSlides) currentSlide = 0;
+            if (n < 0) currentSlide = totalSlides - 1;
+            
+            slides.forEach(slide => {
+                slide.classList.add('hidden');
+                slide.classList.remove('active');
+            });
+            dots.forEach(dot => dot.classList.remove('active'));
+            
+            slides[currentSlide].classList.remove('hidden');
+            slides[currentSlide].classList.add('active');
+            dots[currentSlide].classList.add('active');
+        }
+
+        function nextSlide() {
+            currentSlide++;
+            showSlide(currentSlide);
+            resetAutoSlide();
+        }
+
+        function prevSlide() {
+            currentSlide--;
+            showSlide(currentSlide);
+            resetAutoSlide();
+        }
+
+        function goToSlide(n) {
+            currentSlide = n;
+            showSlide(currentSlide);
+            resetAutoSlide();
+        }
+
+        function autoSlide() {
+            currentSlide++;
+            if (currentSlide >= totalSlides) currentSlide = 0;
+            showSlide(currentSlide);
+        }
+
+        function resetAutoSlide() {
+            clearInterval(autoSlideInterval);
+            autoSlideInterval = setInterval(autoSlide, 5000);
+        }
+
         function openPopup(id) { document.getElementById(id).classList.add('active'); }
         function closePopup(id) { document.getElementById(id).classList.remove('active'); }
 
         window.onload = () => {
             checkUserSession();
             renderGrid(products);
+            // Start auto-slide
+            autoSlideInterval = setInterval(autoSlide, 5000);
         };
     </script>
 </body>
