@@ -715,59 +715,54 @@
         
         async function loadProductsFromSupabase() {
             try {
-                console.log('Loading products from Supabase...');
+                console.log('📦 Loading products from Supabase database...');
                 const { data, error } = await supabaseClient
                     .from('products')
-                    .select('*');
+                    .select('*')
+                    .order('created_at', { ascending: false });
                 
                 if (error) {
-                    console.warn('No products table found, using local products with Supabase URLs:', error);
-                    // Fallback: convert local image paths to Supabase URLs
-                    products.forEach(product => {
-                        if (product.img && !product.img.startsWith('http')) {
-                            product.img = getSupabaseImageUrl(product.img);
-                        }
-                    });
+                    console.error('❌ Database error:', error.message);
                     return false;
                 }
                 
-                if (data && data.length > 0) {
-                    // Replace local products with database products
-                    // Use image_url from database, fallback to constructing from img field
-                    products.length = 0;
-                    data.forEach(product => {
-                        const imageUrl = product.image_url || 
-                                       (product.img ? getSupabaseImageUrl(product.img) : '');
-                        products.push({
-                            id: product.id,
-                            brand: product.brand,
-                            name: product.name,
-                            price: product.price,
-                            category: product.category,
-                            desc: product.desc || '',
-                            img: imageUrl
-                        });
-                    });
-                    console.log('Successfully loaded', products.length, 'products from Supabase database');
-                    return true;
-                } else {
-                    console.log('No products in database, using local products with Supabase URLs');
-                    // Fallback: convert local image paths to Supabase URLs
-                    products.forEach(product => {
-                        if (product.img && !product.img.startsWith('http')) {
-                            product.img = getSupabaseImageUrl(product.img);
-                        }
-                    });
+                if (!data || data.length === 0) {
+                    console.warn('⚠️ No products found in database');
                     return false;
                 }
-            } catch (error) {
-                console.error('Failed to load products from Supabase:', error);
-                // Fallback: convert local image paths to Supabase URLs
-                products.forEach(product => {
-                    if (product.img && !product.img.startsWith('http')) {
-                        product.img = getSupabaseImageUrl(product.img);
+                
+                // Clear and replace with database products
+                products.length = 0;
+                
+                data.forEach(product => {
+                    // Determine image URL: use image_url if available, otherwise construct from img field
+                    let imageUrl = product.image_url || '';
+                    
+                    // If image_url is not a full URL, assume it's a relative path and convert it
+                    if (imageUrl && !imageUrl.startsWith('http')) {
+                        imageUrl = getSupabaseImageUrl(imageUrl);
+                    } else if (!imageUrl && product.img) {
+                        // Fallback to img field if image_url is empty
+                        imageUrl = product.img.startsWith('http') ? product.img : getSupabaseImageUrl(product.img);
                     }
+                    
+                    products.push({
+                        id: product.id,
+                        brand: product.brand || '',
+                        name: product.name,
+                        price: product.price,
+                        category: product.category,
+                        desc: product.desc || '',
+                        img: imageUrl
+                    });
                 });
+                
+                console.log('✅ Loaded', products.length, 'products from Supabase');
+                console.log('Categories:', [...new Set(products.map(p => p.category))]);
+                return true;
+                
+            } catch (error) {
+                console.error('❌ Error loading products:', error.message);
                 return false;
             }
         }
