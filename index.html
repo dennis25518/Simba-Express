@@ -716,18 +716,42 @@
         async function loadProductsFromSupabase() {
             try {
                 console.log('📦 Loading products from Supabase database...');
+                
+                // First check if we can connect
+                console.log('🔌 Checking Supabase connection...');
+                const { data: testData, error: testError } = await supabaseClient
+                    .from('products')
+                    .select('id')
+                    .limit(1);
+                
+                if (testError) {
+                    console.error('❌ Supabase connection error:', testError);
+                    console.warn('⚠️ Using local products instead');
+                    return false;
+                }
+                
+                // Now fetch all products
                 const { data, error } = await supabaseClient
                     .from('products')
                     .select('*')
                     .order('created_at', { ascending: false });
                 
                 if (error) {
-                    console.error('❌ Database error:', error.message);
+                    console.error('❌ Query error:', error.message);
+                    console.warn('⚠️ Using local products instead');
                     return false;
                 }
                 
-                if (!data || data.length === 0) {
-                    console.warn('⚠️ No products found in database');
+                if (!data) {
+                    console.error('❌ No data returned from query');
+                    return false;
+                }
+                
+                console.log('📊 Raw data from Supabase:', data);
+                console.log('🔢 Product count:', data.length);
+                
+                if (data.length === 0) {
+                    console.warn('⚠️ No products in database, using local products');
                     return false;
                 }
                 
@@ -778,7 +802,8 @@
                 return true;
                 
             } catch (error) {
-                console.error('❌ Error loading products:', error.message);
+                console.error('❌ Fatal error loading products:', error.message);
+                console.error('Stack:', error);
                 return false;
             }
         }
@@ -1143,10 +1168,10 @@ function renderGrid(data) {
     Object.values(grids).forEach(g => { if(g) g.innerHTML = ''; });
     
     if (!data || data.length === 0) {
-        noRes.classList.remove('hidden');
+        if (noRes) noRes.classList.remove('hidden');
         return;
     } 
-    noRes.classList.add('hidden');
+    if (noRes) noRes.classList.add('hidden');
 
     const limit = window.innerWidth < 768 ? 6 : 10;
 
