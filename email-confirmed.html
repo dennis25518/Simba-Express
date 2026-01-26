@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Barua Imekubali - Simba Express</title>
+    <link rel="icon" type="image/png" href="/favicon/favicon-pro.jpeg">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; }
+        .success-animation {
+            animation: slideIn 0.6s ease-out;
+        }
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-green-50 to-emerald-50">
+    <div class="min-h-screen flex items-center justify-center px-4">
+        <div class="bg-white rounded-lg shadow-2xl p-8 max-w-md w-full success-animation">
+            <!-- Success Icon -->
+            <div class="text-center mb-6">
+                <div class="text-6xl mb-4 pulse">✅</div>
+                <h1 class="text-3xl font-black text-gray-900 mb-2 uppercase tracking-tight">Karibu!</h1>
+                <p class="text-lg text-green-600 font-bold">Akaunti Yako Imethibitishwa</p>
+            </div>
+
+            <!-- Message -->
+            <div class="bg-green-50 border-2 border-green-200 rounded-lg p-4 mb-8">
+                <p class="text-gray-700 text-sm font-bold leading-relaxed">
+                    Asante kwa kuandika! Barua pepe yako imekubali kwa mafanikio. 
+                    <br><br>
+                    Sasa unaweza kuingia na kuanza kuagiza bidhaa za Simba Express.
+                </p>
+            </div>
+
+            <!-- Loading Bar -->
+            <div class="mb-6">
+                <p class="text-xs text-gray-600 font-bold uppercase tracking-widest mb-2 text-center">Unakurejeshwa kwenye ukurasa...</p>
+                <div class="w-full bg-gray-200 rounded-full h-2 overflow-hidden">
+                    <div class="bg-green-600 h-full rounded-full animate-pulse" style="width: 100%; animation: loading 3s ease-in-out;"></div>
+                </div>
+            </div>
+
+            <!-- Count Down -->
+            <div class="text-center mb-6">
+                <p class="text-2xl font-black text-green-600" id="countdown">3</p>
+                <p class="text-xs text-gray-500">sekunde</p>
+            </div>
+
+            <!-- Manual Button -->
+            <a href="/" class="w-full bg-green-600 text-white py-4 rounded-lg font-black uppercase tracking-widest text-sm hover:bg-green-700 transition flex items-center justify-center gap-2">
+                <span>🏠 Rudi Nyumbani Sasa</span>
+            </a>
+
+            <!-- Info -->
+            <div class="mt-6 text-center text-xs text-gray-500 font-bold">
+                <p>Akaunti yako imethibitishwa kwa mafanikio!</p>
+                <p class="mt-2">Unaweza sasa kuingia na kuanza kuagiza.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Countdown and redirect
+        let count = 3;
+        const countdownEl = document.getElementById('countdown');
+
+        const interval = setInterval(() => {
+            count--;
+            countdownEl.textContent = count;
+
+            if (count <= 0) {
+                clearInterval(interval);
+                window.location.href = '/';
+            }
+        }, 1000);
+
+        // Also redirect after 3 seconds regardless
+        setTimeout(() => {
+            window.location.href = '/';
+        }, 3500);
+    </script>
+</body>
+</html>
