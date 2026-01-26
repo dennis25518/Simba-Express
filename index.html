@@ -331,42 +331,102 @@
     </section>
 
     <section class="container mx-auto mt-12 px-4 max-w-6xl">
-        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
-            <div class="relative flex-grow max-w-md">
-                <input type="text" id="product-search" onkeyup="filterProducts()" placeholder="Tafuta Azam, Mo, ID..." 
-                       class="w-full p-3 pl-10 border border-gray-300 rounded focus:ring-2 focus:ring-red-600 outline-none shadow-sm">
-                <span class="absolute left-3 top-3 text-gray-400"></span>
-            </div>
-            <div class="flex gap-2 overflow-x-auto no-scrollbar pb-2" id="category-tabs">
-                <button onclick="filterByCategory('All')" class="category-tab active px-5 py-2 border rounded-full text-[10px] font-bold uppercase tracking-tighter whitespace-nowrap">Bidhaa Zote</button>
-                <button onclick="filterByCategory('Grains')" class="category-tab px-5 py-2 border rounded-full text-[10px] font-bold uppercase tracking-tighter whitespace-nowrap">Nafaka</button>
-                <button onclick="filterByCategory('Oils')" class="category-tab px-5 py-2 border rounded-full text-[10px] font-bold uppercase tracking-tighter whitespace-nowrap">Mafuta</button>
-                <button onclick="filterByCategory('Drinks')" class="category-tab px-5 py-2 border rounded-full text-[10px] font-bold uppercase tracking-tighter whitespace-nowrap">Vinywaji</button>
+        <!-- Categories Grid Only -->
+        <div class="mb-16">
+            <h2 class="text-3xl font-black text-gray-900 mb-12 text-center uppercase tracking-tighter">Chagua Kategoria</h2>
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                <!-- Unga -->
+                <div onclick="showCategoryProducts('unga')" class="bg-white border-2 border-gray-200 rounded-lg p-6 hover:border-red-600 hover:shadow-xl cursor-pointer transition-all transform hover:scale-105">
+                    <div class="text-5xl mb-4 text-center">🌾</div>
+                    <h3 class="text-lg font-black text-gray-900 text-center uppercase tracking-tight">Unga</h3>
+                    <p class="text-xs text-gray-600 text-center mt-2">Unga na nafaka</p>
+                </div>
+                
+                <!-- Vinywaji -->
+                <div onclick="showCategoryProducts('vinywaji')" class="bg-white border-2 border-gray-200 rounded-lg p-6 hover:border-red-600 hover:shadow-xl cursor-pointer transition-all transform hover:scale-105">
+                    <div class="text-5xl mb-4 text-center">🥤</div>
+                    <h3 class="text-lg font-black text-gray-900 text-center uppercase tracking-tight">Vinywaji</h3>
+                    <p class="text-xs text-gray-600 text-center mt-2">Maji na soda</p>
+                </div>
+                
+                <!-- Maji -->
+                <div onclick="showCategoryProducts('maji')" class="bg-white border-2 border-gray-200 rounded-lg p-6 hover:border-red-600 hover:shadow-xl cursor-pointer transition-all transform hover:scale-105">
+                    <div class="text-5xl mb-4 text-center">💧</div>
+                    <h3 class="text-lg font-black text-gray-900 text-center uppercase tracking-tight">Maji</h3>
+                    <p class="text-xs text-gray-600 text-center mt-2">Maji safi</p>
+                </div>
+                
+                <!-- Pipi -->
+                <div onclick="showCategoryProducts('pipi')" class="bg-white border-2 border-gray-200 rounded-lg p-6 hover:border-red-600 hover:shadow-xl cursor-pointer transition-all transform hover:scale-105">
+                    <div class="text-5xl mb-4 text-center">🍬</div>
+                    <h3 class="text-lg font-black text-gray-900 text-center uppercase tracking-tight">Pipi</h3>
+                    <p class="text-xs text-gray-600 text-center mt-2">Pipi na keki</p>
+                </div>
+                
+                <!-- Vyakula -->
+                <div onclick="showCategoryProducts('vyakula')" class="bg-white border-2 border-gray-200 rounded-lg p-6 hover:border-red-600 hover:shadow-xl cursor-pointer transition-all transform hover:scale-105">
+                    <div class="text-5xl mb-4 text-center">🍜</div>
+                    <h3 class="text-lg font-black text-gray-900 text-center uppercase tracking-tight">Vyakula</h3>
+                    <p class="text-xs text-gray-600 text-center mt-2">Chakula kwa haraka</p>
+                </div>
+                
+                <!-- Maziwa -->
+                <div onclick="showCategoryProducts('maziwa')" class="bg-white border-2 border-gray-200 rounded-lg p-6 hover:border-red-600 hover:shadow-xl cursor-pointer transition-all transform hover:scale-105">
+                    <div class="text-5xl mb-4 text-center">🥛</div>
+                    <h3 class="text-lg font-black text-gray-900 text-center uppercase tracking-tight">Maziwa</h3>
+                    <p class="text-xs text-gray-600 text-center mt-2">Maziwa na bidhaa</p>
+                </div>
+                
+                <!-- Watoto -->
+                <div onclick="showCategoryProducts('watoto')" class="bg-white border-2 border-gray-200 rounded-lg p-6 hover:border-red-600 hover:shadow-xl cursor-pointer transition-all transform hover:scale-105">
+                    <div class="text-5xl mb-4 text-center">👶</div>
+                    <h3 class="text-lg font-black text-gray-900 text-center uppercase tracking-tight">Watoto</h3>
+                    <p class="text-xs text-gray-600 text-center mt-2">Bidhaa za watoto</p>
+                </div>
+                
+                <!-- Afya -->
+                <div onclick="showCategoryProducts('afya')" class="bg-white border-2 border-gray-200 rounded-lg p-6 hover:border-red-600 hover:shadow-xl cursor-pointer transition-all transform hover:scale-105">
+                    <div class="text-5xl mb-4 text-center">💊</div>
+                    <h3 class="text-lg font-black text-gray-900 text-center uppercase tracking-tight">Afya</h3>
+                    <p class="text-xs text-gray-600 text-center mt-2">Dawa na vitamini</p>
+                </div>
+                
+                <!-- Steshenari -->
+                <div onclick="showCategoryProducts('steshenari')" class="bg-white border-2 border-gray-200 rounded-lg p-6 hover:border-red-600 hover:shadow-xl cursor-pointer transition-all transform hover:scale-105">
+                    <div class="text-5xl mb-4 text-center">📝</div>
+                    <h3 class="text-lg font-black text-gray-900 text-center uppercase tracking-tight">Steshenari</h3>
+                    <p class="text-xs text-gray-600 text-center mt-2">Karatasi na kalamu</p>
+                </div>
+                
+                <!-- Usafi -->
+                <div onclick="showCategoryProducts('usafi')" class="bg-white border-2 border-gray-200 rounded-lg p-6 hover:border-red-600 hover:shadow-xl cursor-pointer transition-all transform hover:scale-105">
+                    <div class="text-5xl mb-4 text-center">🧼</div>
+                    <h3 class="text-lg font-black text-gray-900 text-center uppercase tracking-tight">Usafi</h3>
+                    <p class="text-xs text-gray-600 text-center mt-2">Bidhaa za usafi</p>
+                </div>
             </div>
         </div>
 
-        
-        <section class="container mx-auto mt-12 px-4 max-w-6xl">
-    <div class="mb-16">
-        <h3 class="text-xl font-black text-gray-800 mb-6 border-l-4 border-red-600 pl-3 uppercase tracking-tighter italic">Nafaka na Chakula</h3>
-        <div id="product-list-nafaka" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6"></div>
-        <button id="btn-nafaka" onclick="expandSection('nafaka')" class="hidden mx-auto mt-8 bg-gray-100 hover:bg-gray-200 text-gray-800 font-black py-3 px-8 rounded-full text-xs uppercase tracking-widest transition">Tazama Zaidi</button>
-    </div>
-
-    <div class="mb-16">
-        <h3 class="text-xl font-black text-gray-800 mb-6 border-l-4 border-yellow-500 pl-3 uppercase tracking-tighter italic">Vinywaji Baridi</h3>
-        <div id="product-list-vinywaji" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6"></div>
-        <button id="btn-vinywaji" onclick="expandSection('vinywaji')" class="hidden mx-auto mt-8 bg-gray-100 hover:bg-gray-200 text-gray-800 font-black py-3 px-8 rounded-full text-xs uppercase tracking-widest transition">Tazama Zaidi</button>
-    </div>
-
-    <div class="mb-16">
-        <h3 class="text-xl font-black text-gray-800 mb-6 border-l-4 border-blue-600 pl-3 uppercase tracking-tighter italic">Mengineyo</h3>
-        <div id="product-list-mengineyo" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6"></div>
-        <button id="btn-mengineyo" onclick="expandSection('mengineyo')" class="hidden mx-auto mt-8 bg-gray-100 hover:bg-gray-200 text-gray-800 font-black py-3 px-8 rounded-full text-xs uppercase tracking-widest transition">Tazama Zaidi</button>
-    </div>
-
-    <div id="no-results" class="hidden text-center py-20 text-gray-400 font-bold uppercase tracking-widest">Hatuna hii bidhaa kwa sasa.</div>
-</section>
+        <!-- Category Products Modal -->
+        <div id="category-products-modal" class="modal" onclick="closeCategoryView()">
+            <div class="bg-white w-full max-w-2xl rounded-lg shadow-2xl modal-content-scroll" onclick="event.stopPropagation()">
+                <div class="sticky top-0 bg-white border-b p-6 flex justify-between items-center z-10">
+                    <h2 id="category-title" class="text-2xl font-black uppercase tracking-tight"></h2>
+                    <button onclick="closeCategoryView()" class="text-gray-400 text-2xl font-bold hover:text-gray-600">✕</button>
+                </div>
+                
+                <div class="p-6">
+                    <div class="relative mb-6">
+                        <input type="text" id="category-search" onkeyup="filterCategoryProducts()" placeholder="Tafuta bidhaa..." 
+                               class="w-full p-3 pl-10 border border-gray-300 rounded focus:ring-2 focus:ring-red-600 outline-none">
+                        <span class="absolute left-3 top-3 text-gray-400">🔍</span>
+                    </div>
+                    
+                    <div id="category-products-grid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"></div>
+                </div>
+            </div>
+        </div>
+    </section>
         
     </main>
 
@@ -1028,6 +1088,99 @@ function collapseSection(key) {
             document.querySelectorAll('.category-tab').forEach(t => t.classList.toggle('active', t.innerText.toLowerCase() === cat.toLowerCase()));
             const filtered = cat === 'All' ? products : products.filter(p => p.category === cat);
             renderGrid(filtered);
+        }
+
+        // Category Functions
+        let currentCategoryFilter = '';
+
+        function showCategoryProducts(category) {
+            currentCategoryFilter = category;
+            const modal = document.getElementById('category-products-modal');
+            const grid = document.getElementById('category-products-grid');
+            const titleEl = document.getElementById('category-title');
+            const searchInput = document.getElementById('category-search');
+            
+            if (titleEl) titleEl.textContent = category.charAt(0).toUpperCase() + category.slice(1);
+            if (searchInput) searchInput.value = '';
+            
+            const categoryMap = {
+                'unga': ['Grains', 'Oils'],
+                'vinywaji': ['Drinks', 'Soda'],
+                'maji': ['Drinks'],
+                'pipi': ['Soda'],
+                'vyakula': ['Oils', 'Nafaka'],
+                'maziwa': ['Oils'],
+                'watoto': ['Oils'],
+                'afya': [],
+                'steshenari': [],
+                'usafi': []
+            };
+            
+            const productCategories = categoryMap[category] || [];
+            const filtered = productCategories.length > 0 ? products.filter(p => productCategories.includes(p.category)) : [];
+            
+            grid.innerHTML = '';
+            if (filtered.length === 0) {
+                grid.innerHTML = '<div class="col-span-full text-center py-8 text-gray-400 font-bold uppercase text-sm">Hakuna bidhaa.</div>';
+            } else {
+                filtered.forEach(product => {
+                    const card = document.createElement('div');
+                    card.className = 'border border-gray-200 rounded-lg p-3 bg-white cursor-pointer hover:shadow-lg transition-shadow';
+                    card.onclick = () => openProduct(product.id);
+                    card.innerHTML = `
+                        <img src="${product.img}" alt="${product.name}" class="w-full h-32 object-cover rounded mb-2">
+                        <h3 class="text-xs font-bold text-gray-900 line-clamp-1">${product.name}</h3>
+                        <p class="text-[10px] text-gray-600 mb-2">${product.brand}</p>
+                        <p class="text-red-600 font-black text-sm">TSH ${product.price.toLocaleString()}</p>
+                    `;
+                    grid.appendChild(card);
+                });
+            }
+            
+            modal.style.display = 'flex';
+        }
+
+        function closeCategoryView() {
+            document.getElementById('category-products-modal').style.display = 'none';
+            currentCategoryFilter = '';
+        }
+
+        function filterCategoryProducts() {
+            const query = document.getElementById('category-search').value.toLowerCase();
+            const categoryMap = {
+                'unga': ['Grains', 'Oils'],
+                'vinywaji': ['Drinks', 'Soda'],
+                'maji': ['Drinks'],
+                'pipi': ['Soda'],
+                'vyakula': ['Oils', 'Nafaka'],
+                'maziwa': ['Oils'],
+                'watoto': ['Oils'],
+                'afya': [],
+                'steshenari': [],
+                'usafi': []
+            };
+            
+            const productCategories = categoryMap[currentCategoryFilter] || [];
+            const filtered = productCategories.length > 0 ? products.filter(p => productCategories.includes(p.category) && (p.name.toLowerCase().includes(query) || p.brand.toLowerCase().includes(query))) : [];
+            
+            const grid = document.getElementById('category-products-grid');
+            grid.innerHTML = '';
+            if (filtered.length === 0) {
+                grid.innerHTML = '<div class="col-span-full text-center py-8 text-gray-400 font-bold uppercase text-sm">Hakuna matokeo.</div>';
+            } else {
+                filtered.forEach(product => {
+                    const card = document.createElement('div');
+                    card.className = 'border border-gray-200 rounded-lg p-3 bg-white cursor-pointer hover:shadow-lg transition-shadow';
+                    card.onclick = () => openProduct(product.id);
+                    card.innerHTML = `
+                        <img src="${product.img}" alt="${product.name}" class="w-full h-32 object-cover rounded mb-2">
+                        <h3 class="text-xs font-bold text-gray-900 line-clamp-1">${product.name}</h3>
+                        <p class="text-[10px] text-gray-600 mb-2">${product.brand}</p>
+                        <p class="text-red-600 font-black text-sm">TSH ${product.price.toLocaleString()}</p>
+                    `;
+                    grid.appendChild(card);
+                });
+            }
         }
 
         function openProduct(id) {
