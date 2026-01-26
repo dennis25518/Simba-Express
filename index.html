@@ -758,7 +758,23 @@
                 });
                 
                 console.log('✅ Loaded', products.length, 'products from Supabase');
-                console.log('Categories:', [...new Set(products.map(p => p.category))]);
+                const categories = [...new Set(products.map(p => p.category))];
+                console.log('Categories:', categories);
+                
+                // Debug: Show all products
+                console.log('📋 All Products:');
+                products.forEach(p => {
+                    console.log(`  - ${p.name} (${p.category}) - ${p.brand}`);
+                });
+                
+                // Debug: Look for water products
+                const waterProducts = products.filter(p => p.name.toLowerCase().includes('water') || p.name.toLowerCase().includes('maji') || p.category.toLowerCase().includes('maji'));
+                if (waterProducts.length > 0) {
+                    console.log('💧 Water Products Found:', waterProducts);
+                } else {
+                    console.warn('⚠️ No water products found!');
+                }
+                
                 return true;
                 
             } catch (error) {
