@@ -676,15 +676,9 @@
             const userEmail = currentUser?.email || 'User';
             const profilePic = currentUser?.profile?.profile_picture_url;
             
-            console.log('updateUserUI called');
-            console.log('Profile picture URL:', profilePic);
-            
             let profileImageHtml = '';
             if (profilePic) {
-                console.log('Creating profile image HTML');
                 profileImageHtml = `<img src="${profilePic}" class="w-12 h-12 rounded-full object-cover border-2 border-red-600 mx-auto mb-2" alt="Profile">`;
-            } else {
-                console.log('No profile picture URL available');
             }
             
             menuContent.innerHTML = `
@@ -703,19 +697,12 @@
             
             // Also update navbar button if profile picture exists
             if (profilePic) {
-                console.log('Updating navbar icon with profile picture');
                 const userBtn = document.getElementById('user-icon-btn');
                 if (userBtn) {
                     userBtn.innerHTML = `<img src="${profilePic}" class="w-8 h-8 rounded-full object-cover border-2 border-red-600" alt="Profile">`;
                     userBtn.style.padding = '0';
-                    console.log('✅ Navbar icon updated with profile picture');
-                } else {
-                    console.warn('user-icon-btn element not found');
                 }
-            } else {
-                console.log('No profile picture to update navbar');
             }
-        }
         }
 
         // Switch to login modal
