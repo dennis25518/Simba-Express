@@ -1231,11 +1231,15 @@ function collapseSection(key) {
         let currentCategoryFilter = '';
 
         function showCategoryProducts(category) {
+            console.log('🔵 showCategoryProducts called with:', category);
             currentCategoryFilter = category;
             const modal = document.getElementById('category-products-modal');
             const grid = document.getElementById('category-products-grid');
             const titleEl = document.getElementById('category-title');
             const searchInput = document.getElementById('category-search');
+            
+            console.log('🔵 Modal element exists:', !!modal);
+            console.log('🔵 Grid element exists:', !!grid);
             
             if (titleEl) titleEl.textContent = category.charAt(0).toUpperCase() + category.slice(1);
             if (searchInput) searchInput.value = '';
@@ -1255,19 +1259,22 @@ function collapseSection(key) {
             };
             
             const productCategories = categoryMap[category] || [];
+            console.log('🔵 Looking for categories:', productCategories);
+            console.log('🔵 Total products in array:', products.length);
+            console.log('🔵 All product categories:', [...new Set(products.map(p => p.category))]);
+            
             let filtered = [];
             
             if (productCategories.length > 0) {
                 filtered = products.filter(p => productCategories.includes(p.category));
             }
             
-            // Debug logging
-            console.log(`Category: ${category}, Looking for:`, productCategories, `Found: ${filtered.length} products`);
-            console.log('Available product categories:', [...new Set(products.map(p => p.category))]);
+            console.log('🔵 Filtered products found:', filtered.length);
             
             grid.innerHTML = '';
             if (filtered.length === 0) {
                 grid.innerHTML = '<div class="col-span-full text-center py-8 text-gray-400 font-bold uppercase text-sm">Hakuna bidhaa.</div>';
+                console.log('🔵 No products to display');
             } else {
                 filtered.forEach(product => {
                     const card = document.createElement('div');
@@ -1281,9 +1288,12 @@ function collapseSection(key) {
                     `;
                     grid.appendChild(card);
                 });
+                console.log('🔵 Added', filtered.length, 'products to grid');
             }
             
+            console.log('🔵 About to show modal, current display:', modal.style.display);
             modal.style.display = 'flex';
+            console.log('🔵 Modal display set to:', modal.style.display);
         }
 
         function closeCategoryView() {
@@ -1687,9 +1697,17 @@ function collapseSection(key) {
         function closePopup(id) { document.getElementById(id).classList.remove('active'); }
 
         window.onload = async () => {
+            console.log('Page loaded, starting initialization...');
+            console.log('Total products loaded:', products.length);
+            console.log('Product categories:', [...new Set(products.map(p => p.category))]);
+            
             checkUserSession();
             // Try to load products from Supabase, fallback to local products
             await loadProductsFromSupabase();
+            
+            console.log('After Supabase load - Products count:', products.length);
+            console.log('Product categories:', [...new Set(products.map(p => p.category))]);
+            
             renderGrid(products);
             // Start auto-slide
             autoSlideInterval = setInterval(autoSlide, 5000);
