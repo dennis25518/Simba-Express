@@ -1428,8 +1428,15 @@ function collapseSection(key) {
                     class="w-full border-2 border-gray-200 p-3 rounded-sm text-sm font-bold focus:border-red-600 outline-none transition-colors">
                 <input type="tel" id="delivery-phone" placeholder="Namba ya Simu (255...)" 
                     class="w-full border-2 border-gray-200 p-3 rounded-sm text-sm font-bold focus:border-red-600 outline-none transition-colors">
-                <input type="text" id="delivery-address" placeholder="Mahali (Mtaa/Jengo/Balozi)" 
-                    class="w-full border-2 border-gray-200 p-3 rounded-sm text-sm font-bold focus:border-red-600 outline-none transition-colors">
+                <button type="button" id="get-location-btn" 
+                    class="w-full bg-red-600 text-white p-3 rounded-sm text-sm font-bold hover:bg-red-700 transition-colors flex items-center justify-center gap-2">
+                    📍 Chukua Mahali Yangu (Get My Location)
+                </button>
+                <div id="location-display" class="text-xs text-gray-600 text-center hidden">
+                    <span id="location-status">Mahali umechukuwa ✓</span>
+                </div>
+                <input type="hidden" id="delivery-latitude">
+                <input type="hidden" id="delivery-longitude">
                 <textarea id="delivery-notes" placeholder="Maelezo zaidi (Si lazima)" 
                     class="w-full border-2 border-gray-200 p-3 rounded-sm text-sm font-bold focus:border-red-600 outline-none transition-colors" rows="2"></textarea>
             </div>
@@ -1543,12 +1550,13 @@ function collapseSection(key) {
             // Get delivery information
             const deliveryName = document.getElementById('delivery-name').value.trim();
             const deliveryPhone = document.getElementById('delivery-phone').value.trim();
-            const deliveryAddress = document.getElementById('delivery-address').value.trim();
+            const deliveryLatitude = parseFloat(document.getElementById('delivery-latitude').value);
+            const deliveryLongitude = parseFloat(document.getElementById('delivery-longitude').value);
             const deliveryNotes = document.getElementById('delivery-notes').value.trim();
 
             // Validate required fields
-            if (!deliveryName || !deliveryPhone || !deliveryAddress) {
-                alert('Tafadhali jaza: Jina, Namba ya Simu, na Mahali!');
+            if (!deliveryName || !deliveryPhone || !deliveryLatitude || !deliveryLongitude) {
+                alert('Tafadhali jaza: Jina, Namba ya Simu, na Mahali (chukua GPS)!');
                 return;
             }
 
@@ -1574,7 +1582,8 @@ function collapseSection(key) {
                         user_email: currentUser.email,
                         customer_name: deliveryName,
                         customer_phone: deliveryPhone,
-                        delivery_address: deliveryAddress,
+                        delivery_latitude: deliveryLatitude,
+                        delivery_longitude: deliveryLongitude,
                         delivery_notes: deliveryNotes,
                         order_items: orderItems,
                         subtotal: subtotal,
@@ -1617,7 +1626,51 @@ function collapseSection(key) {
             }
         }
 
-   function sendWhatsApp() {
+        // ============================================
+        // GEOLOCATION HANDLER
+        // ============================================
+        function setupLocationButton() {
+            const getLocationBtn = document.getElementById('get-location-btn');
+            if (!getLocationBtn) return;
+
+            getLocationBtn.addEventListener('click', function() {
+                getLocationBtn.disabled = true;
+                getLocationBtn.textContent = '⏳ Chunguza...';
+
+                if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition(
+                        function(position) {
+                            const lat = position.coords.latitude;
+                            const lng = position.coords.longitude;
+                            
+                            document.getElementById('delivery-latitude').value = lat;
+                            document.getElementById('delivery-longitude').value = lng;
+                            
+                            const locationDisplay = document.getElementById('location-display');
+                            locationDisplay.classList.remove('hidden');
+                            document.getElementById('location-status').textContent = 
+                                `✓ ${lat.toFixed(5)}, ${lng.toFixed(5)}`;
+                            
+                            getLocationBtn.textContent = '📍 Mahali Umechukuwa ✓';
+                            getLocationBtn.classList.add('bg-green-600', 'hover:bg-green-700');
+                            getLocationBtn.classList.remove('bg-red-600', 'hover:bg-red-700');
+                        },
+                        function(error) {
+                            console.error('Geolocation error:', error);
+                            alert('Kapu haiwezi kupata mahali. Tafadhali hakikisha kwamba umekuwa na ruhusa ya GPS.');
+                            getLocationBtn.disabled = false;
+                            getLocationBtn.textContent = '📍 Chukua Mahali Yangu (Get My Location)';
+                        }
+                    );
+                } else {
+                    alert('Kapu lako haina uwezo wa GPS.');
+                    getLocationBtn.disabled = false;
+                    getLocationBtn.textContent = '📍 Chukua Mahali Yangu (Get My Location)';
+                }
+            });
+        }
+
+        function sendWhatsApp() {
     const phone = document.getElementById('cust-phone').value;
     const name = document.getElementById('cust-name').value;
     const loc = document.getElementById('cust-loc').value;
@@ -1720,7 +1773,13 @@ function collapseSection(key) {
             autoSlideInterval = setInterval(autoSlide, 5000);
         }
 
-        function openPopup(id) { document.getElementById(id).classList.add('active'); }
+        function openPopup(id) { 
+            document.getElementById(id).classList.add('active'); 
+            // Setup location button when cart modal is opened
+            if (id === 'cart-modal') {
+                setTimeout(() => setupLocationButton(), 100);
+            }
+        }
         function closePopup(id) { document.getElementById(id).classList.remove('active'); }
 
         window.onload = async () => {
