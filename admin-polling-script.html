@@ -1,0 +1,268 @@
+<!-- UPDATED ADMIN DASHBOARD WITH ORDER POLLING -->
+<!-- This replaces the previous admin-dash.html in Simba-Merchant-App -->
+<!-- Add this to your Simba-Merchant-App repository -->
+
+<script>
+// ============================================
+// ORDER POLLING & ROUTING ENGINE
+// ============================================
+
+let pollInterval = null;
+let ordersCache = {};
+
+async function startOrderPolling() {
+    console.log('Starting order polling...');
+    
+    // Poll immediately on start
+    await pollPendingOrders();
+    
+    // Then poll every 30 seconds
+    pollInterval = setInterval(async () => {
+        await pollPendingOrders();
+    }, 30000);
+}
+
+async function pollPendingOrders() {
+    if (!window.supabaseClient) {
+        console.log('Supabase not ready, skipping poll');
+        return;
+    }
+
+    try {
+        // Fetch ALL pending orders from Simba Express
+        const { data: pendingOrders, error } = await window.supabaseClient
+            .from('orders')
+            .select('*')
+            .eq('order_status', 'pending')
+            .limit(100);
+
+        if (error) {
+            console.error('Error fetching orders:', error);
+            return;
+        }
+
+        if (!pendingOrders || pendingOrders.length === 0) {
+            console.log('No pending orders');
+            updateOrdersCount(0);
+            return;
+        }
+
+        console.log(`Found ${pendingOrders.length} pending orders`);
+        
+        // Process each pending order through matchmaker
+        let successCount = 0;
+        let failureCount = 0;
+
+        for (const order of pendingOrders) {
+            // Skip if already processed
+            if (ordersCache[order.id]) {
+                continue;
+            }
+
+            try {
+                const matched = await runMatchmakerForOrder(order);
+                if (matched) {
+                    successCount++;
+                    ordersCache[order.id] = true;
+                } else {
+                    failureCount++;
+                }
+            } catch (err) {
+                console.error(`Error processing order ${order.id}:`, err);
+                failureCount++;
+            }
+        }
+
+        // Update dashboard stats
+        updateOrdersCount(pendingOrders.length);
+        console.log(`Routing Results: ${successCount} auto-matched, ${failureCount} manual required`);
+        
+        // Refresh manual queue display
+        await refreshManualQueue();
+
+    } catch (error) {
+        console.error('Polling error:', error);
+    }
+}
+
+async function runMatchmakerForOrder(order) {
+    try {
+        // Validate order has required GPS data
+        if (!order.delivery_latitude || !order.delivery_longitude) {
+            throw new Error('MISSING_GPS_DATA');
+        }
+
+        console.log(`🔍 Processing order ${order.id} at GPS: ${order.delivery_latitude}, ${order.delivery_longitude}`);
+
+        // 1. Query merchants within 5km radius
+        const nearbyMerchants = await findNearbyMerchants(
+            order.delivery_latitude,
+            order.delivery_longitude,
+            5 // 5km radius
+        );
+
+        if (!nearbyMerchants || nearbyMerchants.length === 0) {
+            console.warn(`❌ No merchants within 5km radius for order ${order.id}`);
+            await markOrderAsManualRequired(order.id, 'NO_NEARBY_MERCHANTS');
+            return false;
+        }
+
+        console.log(`✅ Found ${nearbyMerchants.length} nearby merchants`);
+
+        // 2. Check which merchants have inventory for this order's items
+        const matchedMerchant = await findMerchantWithInventory(
+            nearbyMerchants,
+            order.order_items
+        );
+
+        if (!matchedMerchant) {
+            console.warn(`❌ No merchants with inventory for order ${order.id}`);
+            await markOrderAsManualRequired(order.id, 'NO_INVENTORY_MATCH');
+            return false;
+        }
+
+        console.log(`✅ Matched merchant: ${matchedMerchant.id}`);
+
+        // 3. Assign order to merchant
+        const { error: updateError } = await window.supabaseClient
+            .from('orders')
+            .update({
+                order_status: 'sent_to_merchant',
+                assigned_merchant_id: matchedMerchant.id,
+                routing_timestamp: new Date().toISOString()
+            })
+            .eq('id', order.id);
+
+        if (updateError) {
+            throw updateError;
+        }
+
+        console.log(`✅ Order ${order.id} routed to merchant ${matchedMerchant.id}`);
+        return true;
+
+    } catch (error) {
+        console.error(`Error in matchmaker for order ${order.id}:`, error);
+        await markOrderAsManualRequired(order.id, error.message);
+        return false;
+    }
+}
+
+async function findNearbyMerchants(lat, lng, radiusKm) {
+    try {
+        // Use Supabase RPC to calculate distance or do client-side calculation
+        const { data: merchants, error } = await window.supabaseClient
+            .from('merchants')
+            .select('id, store_name, latitude, longitude, phone')
+            .not('latitude', 'is', null)
+            .not('longitude', 'is', null);
+
+        if (error || !merchants) {
+            console.error('Error fetching merchants:', error);
+            return [];
+        }
+
+        // Filter by distance (haversine formula)
+        const nearby = merchants.filter(merchant => {
+            const distance = calculateDistance(
+                lat, lng,
+                merchant.latitude, merchant.longitude
+            );
+            return distance <= radiusKm;
+        });
+
+        // Sort by distance (closest first)
+        nearby.sort((a, b) => {
+            const distA = calculateDistance(lat, lng, a.latitude, a.longitude);
+            const distB = calculateDistance(lat, lng, b.latitude, b.longitude);
+            return distA - distB;
+        });
+
+        return nearby;
+
+    } catch (error) {
+        console.error('Error finding nearby merchants:', error);
+        return [];
+    }
+}
+
+function calculateDistance(lat1, lon1, lat2, lon2) {
+    // Haversine formula to calculate distance between two GPS points in km
+    const R = 6371; // Earth's radius in km
+    const dLat = toRad(lat2 - lat1);
+    const dLon = toRad(lon2 - lon1);
+    const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+              Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
+              Math.sin(dLon / 2) * Math.sin(dLon / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    return R * c;
+}
+
+function toRad(degrees) {
+    return degrees * (Math.PI / 180);
+}
+
+async function findMerchantWithInventory(merchants, orderItems) {
+    // orderItems is array like: [{product_id, product_name, quantity, ...}, ...]
+    
+    for (const merchant of merchants) {
+        try {
+            // Check if merchant has all required items in inventory
+            let hasAllItems = true;
+
+            for (const item of orderItems) {
+                const { data: inventory, error } = await window.supabaseClient
+                    .from('merchant_inventory')
+                    .select('quantity')
+                    .eq('merchant_id', merchant.id)
+                    .eq('product_id', item.product_id)
+                    .single();
+
+                if (error || !inventory || inventory.quantity < item.quantity) {
+                    hasAllItems = false;
+                    break;
+                }
+            }
+
+            if (hasAllItems) {
+                return merchant;
+            }
+
+        } catch (error) {
+            console.error(`Error checking inventory for merchant ${merchant.id}:`, error);
+            continue;
+        }
+    }
+
+    return null;
+}
+
+async function markOrderAsManualRequired(orderId, reason) {
+    try {
+        await window.supabaseClient
+            .from('orders')
+            .update({
+                order_status: 'manual_required',
+                routing_error: reason,
+                routing_timestamp: new Date().toISOString()
+            })
+            .eq('id', orderId);
+        console.log(`Marked order ${orderId} as manual_required: ${reason}`);
+    } catch (error) {
+        console.error('Error marking order as manual:', error);
+    }
+}
+
+function updateOrdersCount(count) {
+    const badge = document.getElementById('orders-count');
+    if (badge) {
+        badge.textContent = count;
+    }
+}
+
+// Start polling when dashboard loads
+window.addEventListener('DOMContentLoaded', () => {
+    setTimeout(() => {
+        startOrderPolling();
+    }, 2000); // Give Supabase time to initialize
+});
+</script>
