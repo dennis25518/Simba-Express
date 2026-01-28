@@ -1,0 +1,939 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Account | Simba Express</title>
+    <link rel="icon" type="image/png" href="/favicon/favicon-pro.jpeg">
+    <link rel="stylesheet" href="./dist/output.css">
+    <style>
+        body { font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; scroll-behavior: smooth; }
+        
+        .profile-header {
+            background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+            color: white;
+            padding: 2rem;
+        }
+
+        .profile-picture-container {
+            position: relative;
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 1rem;
+        }
+
+        .profile-picture {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid white;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+
+        .edit-picture-btn {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            background: white;
+            border: none;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+            transition: transform 0.2s;
+        }
+
+        .edit-picture-btn:hover { transform: scale(1.1); }
+
+        .tab-container {
+            display: flex;
+            border-bottom: 2px solid #f3f4f6;
+            overflow-x: auto;
+            margin: 0;
+            padding: 0;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 1rem;
+            border: none;
+            background: white;
+            cursor: pointer;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 12px;
+            color: #6b7280;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s;
+            white-space: nowrap;
+        }
+
+        .tab-btn.active {
+            color: #dc2626;
+            border-bottom-color: #dc2626;
+            background: #fef2f2;
+        }
+
+        .tab-content {
+            display: none;
+            padding: 2rem 1rem;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        @media (max-width: 640px) {
+            .info-grid { grid-template-columns: 1fr; }
+        }
+
+        .info-field {
+            border: 1px solid #e5e7eb;
+            padding: 1rem;
+            border-radius: 8px;
+            background: #f9fafb;
+        }
+
+        .info-label {
+            font-size: 12px;
+            font-weight: 700;
+            color: #6b7280;
+            text-transform: uppercase;
+            margin-bottom: 0.5rem;
+            letter-spacing: 0.5px;
+        }
+
+        .info-value {
+            font-size: 16px;
+            font-weight: 600;
+            color: #1f2937;
+            word-break: break-word;
+        }
+
+        .edit-btn {
+            background: #dc2626;
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 4px;
+            font-weight: 700;
+            cursor: pointer;
+            text-transform: uppercase;
+            font-size: 12px;
+            transition: background 0.3s;
+            margin-bottom: 2rem;
+        }
+
+        .edit-btn:hover { background: #b91c1c; }
+        .edit-btn:active { transform: scale(0.98); }
+
+        .order-card {
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            background: white;
+            transition: box-shadow 0.3s;
+        }
+
+        .order-card:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+
+        .order-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 1rem;
+            gap: 1rem;
+        }
+
+        .order-id {
+            font-weight: 700;
+            color: #dc2626;
+            font-size: 14px;
+        }
+
+        .order-status {
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .status-pending { background: #fef3c7; color: #92400e; }
+        .status-processing { background: #dbeafe; color: #0c4a6e; }
+        .status-completed { background: #dcfce7; color: #166534; }
+        .status-cancelled { background: #fee2e2; color: #991b1b; }
+
+        .order-items {
+            margin: 1rem 0;
+            border-top: 1px solid #f3f4f6;
+            border-bottom: 1px solid #f3f4f6;
+            padding: 1rem 0;
+        }
+
+        .order-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem 0;
+            font-size: 14px;
+        }
+
+        .order-item-name { color: #1f2937; font-weight: 500; }
+        .order-item-qty { color: #6b7280; }
+        .order-item-price { color: #dc2626; font-weight: 700; }
+
+        .order-total {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem 0;
+            margin-top: 1rem;
+            font-weight: 700;
+            font-size: 16px;
+        }
+
+        .order-meta {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-top: 1rem;
+            padding: 1rem;
+            background: #f9fafb;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+
+        .order-meta-item { }
+        .order-meta-label { color: #6b7280; text-transform: uppercase; font-weight: 700; font-size: 10px; margin-bottom: 0.25rem; }
+        .order-meta-value { color: #1f2937; font-weight: 600; }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem 1rem;
+        }
+
+        .empty-icon {
+            font-size: 48px;
+            margin-bottom: 1rem;
+        }
+
+        .empty-text {
+            color: #6b7280;
+            margin-bottom: 1rem;
+        }
+
+        .loading-spinner {
+            display: inline-block;
+            width: 24px;
+            height: 24px;
+            border: 3px solid #f3f4f6;
+            border-top-color: #dc2626;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.8);
+            z-index: 100;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        .modal.active { display: flex; }
+
+        .modal-content {
+            background: white;
+            border-radius: 8px;
+            padding: 2rem;
+            width: 100%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: #1f2937;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #6b7280;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            font-weight: 700;
+            color: #1f2937;
+            margin-bottom: 0.5rem;
+            font-size: 14px;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #d1d5db;
+            border-radius: 4px;
+            font-size: 16px;
+            font-family: inherit;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #dc2626;
+            box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
+        }
+
+        .form-textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #d1d5db;
+            border-radius: 4px;
+            font-size: 14px;
+            font-family: inherit;
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .form-textarea:focus {
+            outline: none;
+            border-color: #dc2626;
+            box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
+        }
+
+        .submit-btn {
+            width: 100%;
+            background: #dc2626;
+            color: white;
+            border: none;
+            padding: 0.75rem;
+            border-radius: 4px;
+            font-weight: 700;
+            cursor: pointer;
+            text-transform: uppercase;
+            font-size: 12px;
+            transition: background 0.3s;
+        }
+
+        .submit-btn:hover { background: #b91c1c; }
+        .submit-btn:active { transform: scale(0.98); }
+
+        .logout-btn {
+            width: 100%;
+            background: #ef4444;
+            color: white;
+            border: none;
+            padding: 0.75rem;
+            border-radius: 4px;
+            font-weight: 700;
+            cursor: pointer;
+            text-transform: uppercase;
+            font-size: 12px;
+            margin-top: 1rem;
+        }
+
+        .logout-btn:hover { background: #dc2626; }
+
+        .file-input-wrapper {
+            position: relative;
+            overflow: hidden;
+            display: inline-block;
+            width: 100%;
+        }
+
+        .file-input-label {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.75rem;
+            background: #f3f4f6;
+            border: 2px dashed #d1d5db;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 700;
+            color: #1f2937;
+        }
+
+        .file-input-label:hover {
+            background: #e5e7eb;
+            border-color: #dc2626;
+            color: #dc2626;
+        }
+
+        input[type="file"] { display: none; }
+
+        .success-message {
+            background: #dcfce7;
+            color: #166534;
+            padding: 1rem;
+            border-radius: 4px;
+            margin-bottom: 1rem;
+            font-weight: 700;
+            display: none;
+        }
+
+        .success-message.show { display: block; }
+
+        .error-message {
+            background: #fee2e2;
+            color: #991b1b;
+            padding: 1rem;
+            border-radius: 4px;
+            margin-bottom: 1rem;
+            font-weight: 700;
+            display: none;
+        }
+
+        .error-message.show { display: block; }
+    </style>
+</head>
+<body class="bg-gray-100">
+    <!-- Navigation Bar -->
+    <nav class="bg-white border-b border-gray-200 sticky top-0 z-50">
+        <div class="max-w-6xl mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center gap-2">
+                <a href="index.html" class="text-2xl font-black text-red-600">🦁 SIMBA</a>
+            </div>
+            <div class="flex items-center gap-4">
+                <a href="index.html" class="text-sm font-bold text-gray-600 hover:text-red-600">← Back to Shop</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Profile Header -->
+    <div class="profile-header">
+        <div class="max-w-4xl mx-auto text-center">
+            <div class="profile-picture-container">
+                <img id="profile-picture" src="/favicon/favicon-pro.jpeg" alt="Profile Picture" class="profile-picture">
+                <button class="edit-picture-btn" onclick="document.getElementById('picture-input').click()" title="Change Picture">📸</button>
+                <input type="file" id="picture-input" accept="image/*" onchange="uploadProfilePicture(event)">
+            </div>
+            <h1 id="profile-name" class="text-3xl font-black mb-1">Loading...</h1>
+            <p id="profile-email" class="text-lg opacity-90">Loading...</p>
+        </div>
+    </div>
+
+    <!-- Tab Navigation -->
+    <div class="bg-white sticky top-16 z-40">
+        <div class="max-w-4xl mx-auto">
+            <div class="tab-container">
+                <button class="tab-btn active" onclick="switchTab('info')">📋 My Information</button>
+                <button class="tab-btn" onclick="switchTab('orders')">📦 My Orders</button>
+                <button class="tab-btn" onclick="switchTab('settings')">⚙️ Settings</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tab Content -->
+    <div class="max-w-4xl mx-auto">
+        <!-- My Information Tab -->
+        <div id="info-tab" class="tab-content active">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-2xl font-black">Personal Information</h2>
+                <button class="edit-btn" onclick="openEditModal()">✏️ Edit Information</button>
+            </div>
+
+            <div id="loading-info" class="text-center py-8">
+                <div class="loading-spinner" style="margin: 0 auto;"></div>
+                <p class="text-gray-600 mt-2">Loading your information...</p>
+            </div>
+
+            <div id="info-content" style="display: none;">
+                <div class="info-grid">
+                    <div class="info-field">
+                        <div class="info-label">Full Name</div>
+                        <div class="info-value" id="display-name">-</div>
+                    </div>
+                    <div class="info-field">
+                        <div class="info-label">Email Address</div>
+                        <div class="info-value" id="display-email">-</div>
+                    </div>
+                    <div class="info-field">
+                        <div class="info-label">Phone Number</div>
+                        <div class="info-value" id="display-phone">-</div>
+                    </div>
+                    <div class="info-field">
+                        <div class="info-label">Location</div>
+                        <div class="info-value" id="display-location">-</div>
+                    </div>
+                    <div class="info-field" style="grid-column: 1 / -1;">
+                        <div class="info-label">Bio / About</div>
+                        <div class="info-value" id="display-bio">-</div>
+                    </div>
+                    <div class="info-field">
+                        <div class="info-label">Member Since</div>
+                        <div class="info-value" id="display-joined">-</div>
+                    </div>
+                    <div class="info-field">
+                        <div class="info-label">Total Orders</div>
+                        <div class="info-value" id="display-total-orders">0</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- My Orders Tab -->
+        <div id="orders-tab" class="tab-content">
+            <div class="mb-4">
+                <h2 class="text-2xl font-black">Your Order History</h2>
+                <p class="text-gray-600 mt-1">Track all your purchases with Simba Express</p>
+            </div>
+
+            <div id="loading-orders" class="text-center py-8">
+                <div class="loading-spinner" style="margin: 0 auto;"></div>
+                <p class="text-gray-600 mt-2">Loading your orders...</p>
+            </div>
+
+            <div id="orders-content" style="display: none;">
+                <div id="orders-list"></div>
+            </div>
+
+            <div id="empty-orders" class="empty-state" style="display: none;">
+                <div class="empty-icon">📦</div>
+                <p class="empty-text">You haven't placed any orders yet.</p>
+                <a href="index.html" class="text-red-600 font-bold hover:underline">Start Shopping Now →</a>
+            </div>
+        </div>
+
+        <!-- Settings Tab -->
+        <div id="settings-tab" class="tab-content">
+            <h2 class="text-2xl font-black mb-4">Account Settings</h2>
+
+            <div class="bg-white border border-gray-200 rounded-lg p-6 mb-4">
+                <h3 class="text-lg font-bold mb-2">📝 Change Password</h3>
+                <p class="text-gray-600 text-sm mb-4">Update your password to keep your account secure.</p>
+                <button class="edit-btn" onclick="openPasswordModal()">🔐 Change Password</button>
+            </div>
+
+            <div class="bg-white border border-gray-200 rounded-lg p-6 mb-4">
+                <h3 class="text-lg font-bold mb-2">🔔 Notifications</h3>
+                <p class="text-gray-600 text-sm mb-4">Manage your notification preferences.</p>
+                <label class="flex items-center gap-3 cursor-pointer mb-2">
+                    <input type="checkbox" checked class="w-4 h-4">
+                    <span>Email notifications for orders</span>
+                </label>
+                <label class="flex items-center gap-3 cursor-pointer">
+                    <input type="checkbox" checked class="w-4 h-4">
+                    <span>SMS notifications for deliveries</span>
+                </label>
+            </div>
+
+            <div class="bg-white border border-gray-200 rounded-lg p-6">
+                <h3 class="text-lg font-bold text-red-600 mb-2">⚠️ Danger Zone</h3>
+                <p class="text-gray-600 text-sm mb-4">Permanently delete your account and all associated data.</p>
+                <button class="edit-btn bg-red-700 hover:bg-red-800" onclick="confirmDeleteAccount()">🗑️ Delete Account</button>
+            </div>
+
+            <div class="text-center mt-8">
+                <button class="logout-btn" onclick="logoutFromProfile()">🚪 Logout</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Information Modal -->
+    <div id="edit-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Edit Information</h2>
+                <button class="close-btn" onclick="closeEditModal()">✕</button>
+            </div>
+
+            <div id="edit-success" class="success-message"></div>
+            <div id="edit-error" class="error-message"></div>
+
+            <form onsubmit="saveProfile(event)">
+                <div class="form-group">
+                    <label class="form-label">Full Name</label>
+                    <input type="text" id="edit-name" class="form-input" placeholder="Your full name" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Phone Number</label>
+                    <input type="tel" id="edit-phone" class="form-input" placeholder="255XXXXXXXXX">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Location / Address</label>
+                    <input type="text" id="edit-location" class="form-input" placeholder="Your location">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Bio / About You</label>
+                    <textarea id="edit-bio" class="form-textarea" placeholder="Tell us about yourself..."></textarea>
+                </div>
+
+                <button type="submit" class="submit-btn">💾 Save Changes</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Change Password Modal -->
+    <div id="password-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Change Password</h2>
+                <button class="close-btn" onclick="closePasswordModal()">✕</button>
+            </div>
+
+            <div id="password-success" class="success-message"></div>
+            <div id="password-error" class="error-message"></div>
+
+            <form onsubmit="changePassword(event)">
+                <div class="form-group">
+                    <label class="form-label">Current Password</label>
+                    <input type="password" id="current-password" class="form-input" placeholder="Enter current password" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">New Password</label>
+                    <input type="password" id="new-password" class="form-input" placeholder="Enter new password" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Confirm New Password</label>
+                    <input type="password" id="confirm-password" class="form-input" placeholder="Confirm new password" required>
+                </div>
+
+                <button type="submit" class="submit-btn">🔐 Update Password</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Supabase Configuration
+        const SUPABASE_URL = 'https://cmsqvcqddnefquxzchxy.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNtc3F2Y3FkZG5lZnF1eHpjaHh5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE2ODU1NDU0NDgsImV4cCI6MTk4NzI2NTQ0OH0.9a5h7s7_FBc-gU1Io1eP0K2Xf3d-P1q-Z2M5j7n9k1a';
+
+        let currentUser = null;
+        let currentProfile = null;
+
+        // Initialize
+        window.addEventListener('DOMContentLoaded', initializePage);
+
+        async function initializePage() {
+            // Check if user is logged in
+            const session = JSON.parse(localStorage.getItem('supabaseSession') || '{}');
+            
+            if (!session.user) {
+                window.location.href = 'index.html';
+                return;
+            }
+
+            currentUser = session.user;
+            await loadProfileData();
+            await loadOrderHistory();
+        }
+
+        async function loadProfileData() {
+            try {
+                // Get user profile from localStorage first
+                const userData = JSON.parse(localStorage.getItem('userData') || '{}');
+                
+                // Fetch from Supabase
+                const response = await fetch(
+                    `${SUPABASE_URL}/rest/v1/user_profiles?user_id=eq.${currentUser.id}`,
+                    {
+                        headers: {
+                            'apikey': SUPABASE_KEY,
+                            'Authorization': `Bearer ${SUPABASE_KEY}`,
+                        },
+                    }
+                );
+
+                const data = await response.json();
+                currentProfile = data[0] || {};
+
+                // Update UI
+                document.getElementById('profile-name').textContent = currentProfile.name || userData.name || 'Simba Express User';
+                document.getElementById('profile-email').textContent = currentUser.email || 'user@example.com';
+
+                if (currentProfile.profile_picture_url) {
+                    document.getElementById('profile-picture').src = currentProfile.profile_picture_url;
+                }
+
+                // Fill information tab
+                document.getElementById('display-name').textContent = currentProfile.name || '-';
+                document.getElementById('display-email').textContent = currentUser.email || '-';
+                document.getElementById('display-phone').textContent = currentProfile.phone || '-';
+                document.getElementById('display-location').textContent = currentProfile.location || '-';
+                document.getElementById('display-bio').textContent = currentProfile.bio || '-';
+                document.getElementById('display-joined').textContent = new Date(currentUser.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+
+                // Fill edit form
+                document.getElementById('edit-name').value = currentProfile.name || '';
+                document.getElementById('edit-phone').value = currentProfile.phone || '';
+                document.getElementById('edit-location').value = currentProfile.location || '';
+                document.getElementById('edit-bio').value = currentProfile.bio || '';
+
+                document.getElementById('loading-info').style.display = 'none';
+                document.getElementById('info-content').style.display = 'block';
+
+            } catch (error) {
+                console.error('Error loading profile:', error);
+                document.getElementById('loading-info').innerHTML = '<p class="text-red-600">Error loading profile. Please refresh the page.</p>';
+            }
+        }
+
+        async function loadOrderHistory() {
+            try {
+                const response = await fetch(
+                    `${SUPABASE_URL}/rest/v1/orders?user_id=eq.${currentUser.id}&order=created_at.desc`,
+                    {
+                        headers: {
+                            'apikey': SUPABASE_KEY,
+                            'Authorization': `Bearer ${SUPABASE_KEY}`,
+                        },
+                    }
+                );
+
+                const orders = await response.json();
+
+                if (orders.length === 0) {
+                    document.getElementById('loading-orders').style.display = 'none';
+                    document.getElementById('empty-orders').style.display = 'block';
+                    return;
+                }
+
+                // Update total orders
+                document.getElementById('display-total-orders').textContent = orders.length;
+
+                const ordersList = document.getElementById('orders-list');
+                ordersList.innerHTML = '';
+
+                for (const order of orders) {
+                    const statusClass = `status-${order.order_status || 'pending'}`.toLowerCase();
+                    const createdDate = new Date(order.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+
+                    const orderHTML = `
+                        <div class="order-card">
+                            <div class="order-header">
+                                <div>
+                                    <div class="order-id">Order #${order.id.substring(0, 8).toUpperCase()}</div>
+                                    <div class="text-gray-600 text-sm mt-1">${createdDate}</div>
+                                </div>
+                                <span class="order-status ${statusClass}">${order.order_status || 'Pending'}</span>
+                            </div>
+
+                            <div class="order-items">
+                                <div class="text-sm font-bold text-gray-700 mb-1">Items:</div>
+                                ${order.items && order.items.length > 0 ? order.items.map(item => `
+                                    <div class="order-item">
+                                        <span class="order-item-name">${item.product_name}</span>
+                                        <span class="order-item-qty">x${item.quantity}</span>
+                                        <span class="order-item-price">TZS ${(item.price * item.quantity).toLocaleString()}</span>
+                                    </div>
+                                `).join('') : '<p class="text-gray-500 text-sm">No items recorded</p>'}
+                            </div>
+
+                            <div class="order-total">
+                                <span>Total Amount:</span>
+                                <span>TZS ${order.total_amount ? order.total_amount.toLocaleString() : '0'}</span>
+                            </div>
+
+                            <div class="order-meta">
+                                <div class="order-meta-item">
+                                    <div class="order-meta-label">🚚 Delivery Address</div>
+                                    <div class="order-meta-value">${order.delivery_address || 'Not specified'}</div>
+                                </div>
+                                <div class="order-meta-item">
+                                    <div class="order-meta-label">📞 Contact</div>
+                                    <div class="order-meta-value">${order.customer_phone || 'Not provided'}</div>
+                                </div>
+                                <div class="order-meta-item">
+                                    <div class="order-meta-label">💳 Payment</div>
+                                    <div class="order-meta-value">${order.payment_method || 'Not specified'}</div>
+                                </div>
+                                <div class="order-meta-item">
+                                    <div class="order-meta-label">📝 Notes</div>
+                                    <div class="order-meta-value">${order.special_instructions || 'None'}</div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+
+                    ordersList.innerHTML += orderHTML;
+                }
+
+                document.getElementById('loading-orders').style.display = 'none';
+                document.getElementById('orders-content').style.display = 'block';
+
+            } catch (error) {
+                console.error('Error loading orders:', error);
+                document.getElementById('loading-orders').innerHTML = '<p class="text-red-600">Error loading orders. Please refresh the page.</p>';
+            }
+        }
+
+        function switchTab(tabName) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+
+            // Show selected tab
+            document.getElementById(`${tabName}-tab`).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        function openEditModal() {
+            document.getElementById('edit-modal').classList.add('active');
+        }
+
+        function closeEditModal() {
+            document.getElementById('edit-modal').classList.remove('active');
+            document.getElementById('edit-success').classList.remove('show');
+            document.getElementById('edit-error').classList.remove('show');
+        }
+
+        async function saveProfile(e) {
+            e.preventDefault();
+
+            const name = document.getElementById('edit-name').value;
+            const phone = document.getElementById('edit-phone').value;
+            const location = document.getElementById('edit-location').value;
+            const bio = document.getElementById('edit-bio').value;
+
+            try {
+                const response = await fetch(
+                    `${SUPABASE_URL}/rest/v1/user_profiles?user_id=eq.${currentUser.id}`,
+                    {
+                        method: 'PATCH',
+                        headers: {
+                            'apikey': SUPABASE_KEY,
+                            'Authorization': `Bearer ${SUPABASE_KEY}`,
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            name,
+                            phone,
+                            location,
+                            bio,
+                        }),
+                    }
+                );
+
+                if (response.ok) {
+                    // Update local display
+                    document.getElementById('display-name').textContent = name;
+                    document.getElementById('display-phone').textContent = phone || '-';
+                    document.getElementById('display-location').textContent = location || '-';
+                    document.getElementById('display-bio').textContent = bio || '-';
+                    document.getElementById('profile-name').textContent = name;
+
+                    // Show success message
+                    const successMsg = document.getElementById('edit-success');
+                    successMsg.textContent = '✅ Profile updated successfully!';
+                    successMsg.classList.add('show');
+
+                    setTimeout(() => closeEditModal(), 1500);
+                } else {
+                    throw new Error('Failed to update profile');
+                }
+            } catch (error) {
+                const errorMsg = document.getElementById('edit-error');
+                errorMsg.textContent = '❌ Error updating profile: ' + error.message;
+                errorMsg.classList.add('show');
+            }
+        }
+
+        function openPasswordModal() {
+            document.getElementById('password-modal').classList.add('active');
+        }
+
+        function closePasswordModal() {
+            document.getElementById('password-modal').classList.remove('active');
+            document.getElementById('password-success').classList.remove('show');
+            document.getElementById('password-error').classList.remove('show');
+        }
+
+        async function changePassword(e) {
+            e.preventDefault();
+
+            const newPassword = document.getElementById('new-password').value;
+            const confirmPassword = document.getElementById('confirm-password').value;
+
+            if (newPassword !== confirmPassword) {
+                const errorMsg = document.getElementById('password-error');
+                errorMsg.textContent = '❌ Passwords do not match!';
+                errorMsg.classList.add('show');
+                return;
+            }
+
+            try {
+                // Note: Password change should be handled by Supabase Auth
+                // This is a simplified implementation
+                const errorMsg = document.getElementById('password-error');
+                errorMsg.textContent = '❌ Password change requires proper authentication. Please contact support.';
+                errorMsg.classList.add('show');
+            } catch (error) {
+                const errorMsg = document.getElementById('password-error');
+                errorMsg.textContent = '❌ Error: ' + error.message;
+                errorMsg.classList.add('show');
+            }
+        }
+
+        async function uploadProfilePicture(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            // For now, show a message
+            alert('Profile picture upload requires backend file storage setup. Coming soon!');
+        }
+
+        function confirmDeleteAccount() {
+            if (confirm('Are you sure you want to delete your account? This action cannot be undone.')) {
+                if (confirm('This will permanently delete all your data. Are you absolutely sure?')) {
+                    deleteAccount();
+                }
+            }
+        }
+
+        async function deleteAccount() {
+            alert('Account deletion requires verification. Please contact support.');
+        }
+
+        function logoutFromProfile() {
+            localStorage.removeItem('supabaseSession');
+            localStorage.removeItem('userData');
+            window.location.href = 'index.html';
+        }
+    </script>
+</body>
+</html>

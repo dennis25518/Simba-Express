@@ -1089,9 +1089,13 @@
             }
         }
 
-        // View user profile (future feature)
+        // View user profile
         function viewUserProfile() {
-            alert('Sehemu ya wasifu itakuja hivi karibuni!');
+            if (currentUser) {
+                window.location.href = 'user-profile.html';
+            } else {
+                alert('Please log in first');
+            }
         }
 
         // Get user's live location
