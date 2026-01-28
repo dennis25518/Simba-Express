@@ -1733,6 +1733,12 @@ function collapseSection(key) {
 
         async function initiatePayment(orderId, amount, paymentMethod) {
             try {
+                // Ensure orderId is a string
+                const orderIdStr = String(orderId || '');
+                if (!orderIdStr) {
+                    throw new Error('Order ID is missing');
+                }
+
                 // Show loading indicator
                 const paymentBtn = document.querySelector('button[onclick="processPayment()"]');
                 if (paymentBtn) {
@@ -1740,44 +1746,52 @@ function collapseSection(key) {
                     paymentBtn.textContent = '⏳ Chunguza Dirisha la Malipo...';
                 }
 
-                // Create payment request to Pesapal
-                const iframeUrl = `${PESAPAL_API_URL}?`;
+                // Simple payment data for Pesapal
+                const paymentDescription = `Simba Express Order #${orderIdStr.substring(0, 8)}`;
+                const customerPhone = document.getElementById('delivery-phone')?.value || currentUser.phone || '';
                 
-                // Payment data
-                const paymentData = {
-                    pesapal_request_data: JSON.stringify({
-                        id: orderId,
+                // Create Pesapal payment URL
+                const paymentUrl = `${PESAPAL_API_URL}?` +
+                    `oauth_consumer_key=${encodeURIComponent(PESAPAL_CONSUMER_KEY)}&` +
+                    `pesapal_request_data=${encodeURIComponent(JSON.stringify({
+                        id: orderIdStr,
                         amount: amount,
-                        description: `Simba Express Order #${orderId.slice(0, 8)}`,
+                        description: paymentDescription,
                         type: 'MERCHANT',
-                        reference: orderId,
-                        email: currentUser.email,
-                        phonenumber: document.getElementById('delivery-phone').value,
+                        reference: orderIdStr,
+                        email: currentUser.email || '',
+                        phonenumber: customerPhone,
                         currency: 'TZS',
-                    }),
-                    oauth_consumer_key: PESAPAL_CONSUMER_KEY,
-                    oauth_signature_method: 'HmacSHA1',
-                    oauth_signature: generateHmacSHA1(PESAPAL_CONSUMER_SECRET, PESAPAL_API_URL),
-                    oauth_timestamp: Math.floor(Date.now() / 1000),
-                    oauth_nonce: generateNonce(),
-                    oauth_version: '1.0'
-                };
+                    }))}&` +
+                    `oauth_signature_method=HmacSHA1&` +
+                    `oauth_signature=&` +
+                    `oauth_timestamp=${Math.floor(Date.now() / 1000)}&` +
+                    `oauth_nonce=${generateNonce()}&` +
+                    `oauth_version=1.0`;
 
-                // Alternative: Use Pesapal's iframe method (simpler)
-                // Open Pesapal payment iframe
-                window.open(
-                    `${PESAPAL_API_URL}?oauth_consumer_key=${PESAPAL_CONSUMER_KEY}&pesapal_request_data=${encodeURIComponent(paymentData.pesapal_request_data)}`,
-                    'Pesapal Payment',
-                    'width=800,height=600'
-                );
+                // Open Pesapal payment window
+                const paymentWindow = window.open(paymentUrl, 'Pesapal Payment', 'width=800,height=600');
+                
+                if (!paymentWindow) {
+                    alert('Tafadhali ruhusu vidirisha vipya kufikia hii dirisha. Akili zako inaweza kusimamia kuzuia vidirisha vipya.');
+                    return;
+                }
 
-                console.log('Payment initiated for order:', orderId);
+                console.log('Payment window opened for order:', orderIdStr);
+                
                 // Listen for payment completion
-                pollPaymentStatus(orderId);
+                pollPaymentStatus(orderIdStr);
 
             } catch (error) {
                 console.error('Payment initiation error:', error);
                 alert('Hitilafu katika kuanzisha malipo: ' + error.message);
+                
+                // Re-enable button
+                const paymentBtn = document.querySelector('button[onclick="processPayment()"]');
+                if (paymentBtn) {
+                    paymentBtn.disabled = false;
+                    paymentBtn.textContent = '💳 Lipa Kwa Simu';
+                }
             }
         }
 
