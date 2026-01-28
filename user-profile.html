@@ -683,17 +683,20 @@
                     .from('user_profiles')
                     .select('*')
                     .eq('user_id', currentUser.id)
-                    .single();
+                    .maybeSingle();
 
-                if (error && error.code !== 'PGRST116') {
+                if (error) {
                     console.error('Error loading profile:', error);
-                    throw error;
+                    // Continue without profile - might not exist yet
                 }
 
                 currentProfile = data || {};
 
+                // Use fullname or name field (registration uses fullname)
+                const displayName = currentProfile.fullname || currentProfile.name || 'Simba Express User';
+
                 // Update UI
-                document.getElementById('profile-name').textContent = currentProfile.name || 'Simba Express User';
+                document.getElementById('profile-name').textContent = displayName;
                 document.getElementById('profile-email').textContent = currentUser.email || 'user@example.com';
 
                 if (currentProfile.profile_picture_url) {
@@ -701,15 +704,15 @@
                 }
 
                 // Fill information tab
-                document.getElementById('display-name').textContent = currentProfile.name || '-';
-                document.getElementById('display-email').textContent = currentUser.email || '-';
+                document.getElementById('display-name').textContent = displayName;
+                document.getElementById('display-email').textContent = currentProfile.email || currentUser.email || '-';
                 document.getElementById('display-phone').textContent = currentProfile.phone || '-';
                 document.getElementById('display-location').textContent = currentProfile.location || '-';
                 document.getElementById('display-bio').textContent = currentProfile.bio || '-';
                 document.getElementById('display-joined').textContent = new Date(currentUser.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
 
                 // Fill edit form
-                document.getElementById('edit-name').value = currentProfile.name || '';
+                document.getElementById('edit-name').value = displayName;
                 document.getElementById('edit-phone').value = currentProfile.phone || '';
                 document.getElementById('edit-location').value = currentProfile.location || '';
                 document.getElementById('edit-bio').value = currentProfile.bio || '';
@@ -848,10 +851,12 @@
             const bio = document.getElementById('edit-bio').value;
 
             try {
+                // Update user_profiles table with both fullname and name for compatibility
                 const { data, error } = await supabaseClient
                     .from('user_profiles')
                     .update({
-                        name,
+                        fullname: name,
+                        name: name,
                         phone,
                         location,
                         bio,
