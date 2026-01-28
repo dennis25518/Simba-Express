@@ -6,6 +6,7 @@
     <title>Simba Express | Duka lako, jukumu letu.</title>
     <link rel="icon" type="image/png" href="/favicon/favicon-pro.jpeg">
     <link rel="stylesheet" href="./dist/output.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         body { font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; scroll-behavior: smooth; }
         .hero-bg {
@@ -131,8 +132,8 @@
                 <img src="/favicon/simba_croped2_cropped.png" alt="Logo" class="h-10 w-auto">
             </div>
             <div class="flex items-center">
-                <button id="user-icon-btn" onclick="toggleUserMenu()" class="hover:scale-110 transition-transform flex items-center justify-center w-11 h-11 rounded-full border-2 border-red-600" title="Akaunti Yako" style="color: #E60000; font-size: 24px;">
-                    👤
+                <button id="user-icon-btn" onclick="toggleUserMenu()" class="hover:scale-110 transition-transform flex items-center justify-center w-10 h-10 rounded-full border-2 border-red-600 bg-red-600 text-white font-bold text-xs" title="Akaunti Yako">
+                    <span id="user-initials">👤</span>
                 </button>
             </div>
         </div>
@@ -866,6 +867,16 @@
                     </button>
                 </div>
             `;
+            
+            // Reset navbar button to default emoji
+            const userBtn = document.getElementById('user-icon-btn');
+            if (userBtn) {
+                userBtn.innerHTML = '👤';
+                userBtn.style.backgroundColor = '#dc2626';
+                userBtn.style.color = '#E60000';
+                userBtn.style.fontSize = '24px';
+            }
+            document.getElementById('user-initials').textContent = '👤';
         }
 
         // Update UI after successful login
@@ -873,6 +884,15 @@
             const menuContent = document.getElementById('user-menu-content');
             const userEmail = currentUser?.email || 'User';
             const profilePic = currentUser?.profile?.profile_picture_url;
+            
+            // Get user initials
+            let initials = '👤';
+            if (currentUser?.user_metadata?.full_name) {
+                initials = currentUser.user_metadata.full_name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
+            } else {
+                const emailParts = userEmail.split('@')[0].split('.');
+                initials = emailParts.map(p => p[0]).join('').toUpperCase().slice(0, 2);
+            }
             
             let profileImageHtml = '';
             if (profilePic) {
@@ -893,14 +913,22 @@
                 </div>
             `;
             
-            // Also update navbar button if profile picture exists
+            // Update navbar button - show profile picture or initials
+            const userBtn = document.getElementById('user-icon-btn');
             if (profilePic) {
-                const userBtn = document.getElementById('user-icon-btn');
-                if (userBtn) {
-                    userBtn.innerHTML = `<img src="${profilePic}" class="w-8 h-8 rounded-full object-cover border-2 border-red-600" alt="Profile">`;
-                    userBtn.style.padding = '0';
-                }
+                userBtn.innerHTML = `<img src="${profilePic}" class="w-8 h-8 rounded-full object-cover" alt="Profile">`;
+                userBtn.style.padding = '0';
+                userBtn.style.backgroundColor = 'transparent';
+            } else {
+                // Show initials in circular badge like dashboard
+                userBtn.innerHTML = initials;
+                userBtn.style.padding = '0';
+                userBtn.style.backgroundColor = '#dc2626';
+                userBtn.style.color = 'white';
             }
+            
+            // Update initials span for reference
+            document.getElementById('user-initials').textContent = initials;
         }
 
         // Switch to login modal
