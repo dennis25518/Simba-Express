@@ -8,6 +8,7 @@
  */
 
 const { createClient } = require('@supabase/supabase-js');
+const { safeFetchPesapal } = require('../utils/pesapal-fetch');
 
 const supabase = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL,
@@ -22,7 +23,9 @@ async function verifyTransaction(orderTrackingId, token) {
     const verifyUrl = `https://cybqa.pesapal.com/pesapalv3/api/Orders/GetOrderDetails?orderTrackingId=${orderTrackingId}`;
 
     try {
-        const response = await fetch(verifyUrl, {
+        console.log('[IPN] Verifying transaction with Pesapal...');
+        
+        const data = await safeFetchPesapal(verifyUrl, {
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${token}`,
@@ -30,10 +33,10 @@ async function verifyTransaction(orderTrackingId, token) {
             },
         });
 
-        const data = await response.json();
+        console.log('[IPN] Transaction verified successfully');
         return data;
     } catch (error) {
-        console.error('Transaction verification error:', error);
+        console.error('[IPN] Transaction verification error:', error.message);
         throw error;
     }
 }
@@ -62,13 +65,27 @@ module.exports = async function handler(req, res) {
         const orderId = OrderMerchantReference;
 
         // Step 1: Get Pesapal token for verification
-        const tokenRes = await fetch(`${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/api/pesapal/auth`, {
-            method: 'GET',
-        });
-
-        const tokenData = await tokenRes.json();
-        if (!tokenData.token) {
-            throw new Error('Failed to get Pesapal token for verification');
+        console.log('[IPN] Getting authentication token...');
+        
+        let tokenData;
+        try {
+            const tokenRes = await fetch(`${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/api/pesapal/auth`, {
+                method: 'GET',
+            });
+            
+            if (!tokenRes.ok) {
+                throw new Error(`Auth endpoint returned ${tokenRes.status}`);
+            }
+            
+            tokenData = await tokenRes.json();
+            if (!tokenData.token) {
+                throw new Error('No token in auth response');
+            }
+            
+            console.log('[IPN] Token acquired successfully');
+        } catch (error) {
+            console.error('[IPN] Token acquisition error:', error.message);
+            throw new Error(`Failed to get Pesapal token: ${error.message}`);
         }
 
         // Step 2: Verify transaction with Pesapal
