@@ -493,8 +493,16 @@
                         <div class="info-value" id="display-phone">-</div>
                     </div>
                     <div class="info-field">
-                        <div class="info-label">Location</div>
+                        <div class="info-label">Location / Address</div>
                         <div class="info-value" id="display-location">-</div>
+                    </div>
+                    <div class="info-field">
+                        <div class="info-label">Latitude</div>
+                        <div class="info-value" id="display-latitude">-</div>
+                    </div>
+                    <div class="info-field">
+                        <div class="info-label">Longitude</div>
+                        <div class="info-value" id="display-longitude">-</div>
                     </div>
                     <div class="info-field" style="grid-column: 1 / -1;">
                         <div class="info-label">Bio / About</div>
@@ -709,13 +717,29 @@
                     profilePictureEl.src = '/favicon/favicon-pro.jpeg';
                 }
 
-                // Fill information tab
+                // Fill information tab - Display ALL data from the database
                 document.getElementById('display-name').textContent = displayName;
                 document.getElementById('display-email').textContent = currentProfile.email || currentUser.email || '-';
                 document.getElementById('display-phone').textContent = currentProfile.phone || '-';
                 document.getElementById('display-location').textContent = currentProfile.location || '-';
+                document.getElementById('display-latitude').textContent = currentProfile.latitude ? currentProfile.latitude.toFixed(6) : '-';
+                document.getElementById('display-longitude').textContent = currentProfile.longitude ? currentProfile.longitude.toFixed(6) : '-';
                 document.getElementById('display-bio').textContent = currentProfile.bio || '-';
                 document.getElementById('display-joined').textContent = new Date(currentUser.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+
+                // Log the entire profile object for debugging
+                console.log('User Profile Data from Database:', {
+                    name: displayName,
+                    email: currentProfile.email || currentUser.email,
+                    phone: currentProfile.phone,
+                    location: currentProfile.location,
+                    latitude: currentProfile.latitude,
+                    longitude: currentProfile.longitude,
+                    bio: currentProfile.bio,
+                    profile_picture_url: currentProfile.profile_picture_url,
+                    created_at: currentUser.created_at,
+                    ...currentProfile
+                });
 
                 // Fill edit form
                 document.getElementById('edit-name').value = displayName;
