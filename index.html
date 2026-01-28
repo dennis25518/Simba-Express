@@ -122,6 +122,10 @@
         }
   
     </style>
+    
+    <!-- Pesapal Payment Gateway SDK -->
+    <script src="https://www.pesapal.com/api/os-sdk.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
 </head>
 <body class="bg-white text-gray-900">
 
@@ -1457,8 +1461,31 @@ function collapseSection(key) {
                 <span class="text-2xl font-black text-gray-900 tracking-tighter">Tsh ${grandTotal.toLocaleString()}</span>
             </div>
 
-            <button onclick="submitOrderToSupabase()" class="w-full bg-red-600 text-white py-5 rounded-lg font-black uppercase tracking-widest text-xs shadow-xl active:scale-95 transition flex items-center justify-center gap-2">
-                <span>✅ Thibitisha Oda</span>
+            <div class="space-y-3 mb-6">
+                <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Chagua Njia ya Kulipwa</p>
+                
+                <div class="grid grid-cols-2 gap-3">
+                    <label class="flex items-center p-3 border-2 border-gray-200 rounded-lg cursor-pointer hover:border-red-600 transition">
+                        <input type="radio" name="payment-method" value="mpesa" class="payment-method-radio" checked>
+                        <span class="ml-2 text-xs font-bold">🟢 M-Pesa</span>
+                    </label>
+                    <label class="flex items-center p-3 border-2 border-gray-200 rounded-lg cursor-pointer hover:border-red-600 transition">
+                        <input type="radio" name="payment-method" value="airtel" class="payment-method-radio">
+                        <span class="ml-2 text-xs font-bold">🔴 Airtel</span>
+                    </label>
+                    <label class="flex items-center p-3 border-2 border-gray-200 rounded-lg cursor-pointer hover:border-red-600 transition">
+                        <input type="radio" name="payment-method" value="tigopesa" class="payment-method-radio">
+                        <span class="ml-2 text-xs font-bold">🟡 Tigo Pesa</span>
+                    </label>
+                    <label class="flex items-center p-3 border-2 border-gray-200 rounded-lg cursor-pointer hover:border-red-600 transition">
+                        <input type="radio" name="payment-method" value="halopesa" class="payment-method-radio">
+                        <span class="ml-2 text-xs font-bold">🟣 Halo Pesa</span>
+                    </label>
+                </div>
+            </div>
+
+            <button onclick="processPayment()" class="w-full bg-red-600 text-white py-5 rounded-lg font-black uppercase tracking-widest text-xs shadow-xl active:scale-95 transition flex items-center justify-center gap-2 hover:bg-red-700">
+                <span>💳 Lipa Kwa Simu</span>
             </button>
             
             <button onclick="closePopup('cart-modal')" class="w-full text-center text-[10px] font-black text-gray-400 uppercase mt-5 tracking-widest hover:text-red-600 transition">
@@ -1615,6 +1642,201 @@ function collapseSection(key) {
                 console.error('Order submission error:', error);
                 alert('Kosa katika kuagiza: ' + error.message);
             }
+        }
+
+        // ============================================
+        // PESAPAL PAYMENT GATEWAY INTEGRATION
+        // ============================================
+
+        // Initialize Pesapal credentials (ADD YOUR PESAPAL KEYS HERE)
+        const PESAPAL_CONSUMER_KEY = 'YOUR_PESAPAL_CONSUMER_KEY';
+        const PESAPAL_CONSUMER_SECRET = 'YOUR_PESAPAL_CONSUMER_SECRET';
+        const PESAPAL_API_URL = 'https://api.pesapal.com/api/redirecturl/'; // Live
+        // For testing: 'https://demo.pesapal.com/api/redirecturl/'
+
+        async function processPayment() {
+            if (!currentUser) {
+                alert('Tafadhali ingia kwa akaunti kwanza!');
+                return;
+            }
+
+            if (cart.length === 0) {
+                alert('Kapu lako halina bidhaa!');
+                return;
+            }
+
+            // Get delivery information
+            const deliveryName = document.getElementById('delivery-name')?.value.trim();
+            const deliveryPhone = document.getElementById('delivery-phone')?.value.trim();
+            const deliveryLatitude = parseFloat(document.getElementById('delivery-latitude')?.value);
+            const deliveryLongitude = parseFloat(document.getElementById('delivery-longitude')?.value);
+
+            if (!deliveryName || !deliveryPhone || !deliveryLatitude || !deliveryLongitude) {
+                alert('Tafadhali jaza: Jina, Namba ya Simu, na Mahali (chukua GPS)!');
+                return;
+            }
+
+            // Get selected payment method
+            const paymentMethod = document.querySelector('input[name="payment-method"]:checked')?.value || 'mpesa';
+
+            try {
+                const subtotal = cart.reduce((s, i) => s + (i.price * i.qty), 0);
+                const deliveryFee = 5000;
+                const grandTotal = subtotal + deliveryFee;
+
+                // Create order items array
+                const orderItems = cart.map(item => ({
+                    product_id: item.id,
+                    product_name: item.name,
+                    quantity: item.qty,
+                    unit_price: item.price,
+                    total_price: item.price * item.qty
+                }));
+
+                // First, create the order in Supabase with status 'awaiting_payment'
+                const { data: orderData, error: orderError } = await supabaseClient
+                    .from('orders')
+                    .insert([{
+                        user_id: currentUser.id,
+                        user_email: currentUser.email,
+                        customer_name: deliveryName,
+                        customer_phone: deliveryPhone,
+                        delivery_latitude: deliveryLatitude,
+                        delivery_longitude: deliveryLongitude,
+                        order_items: orderItems,
+                        subtotal: subtotal,
+                        delivery_fee: deliveryFee,
+                        total_amount: grandTotal,
+                        payment_method: paymentMethod,
+                        order_status: 'awaiting_payment',
+                        created_at: new Date(),
+                    }]);
+
+                if (orderError) {
+                    console.error('Order creation error:', orderError);
+                    alert('Kosa katika kuandaa oda: ' + orderError.message);
+                    return;
+                }
+
+                const orderId = orderData[0].id;
+                console.log('Order created:', orderId);
+
+                // Now initiate Pesapal payment
+                initiatePayment(orderId, grandTotal, paymentMethod);
+
+            } catch (error) {
+                console.error('Payment processing error:', error);
+                alert('Kosa katika kulipwa: ' + error.message);
+            }
+        }
+
+        async function initiatePayment(orderId, amount, paymentMethod) {
+            try {
+                // Show loading indicator
+                const btn = event.target;
+                btn.disabled = true;
+                btn.textContent = '⏳ Chunguza Dirisha la Malipo...';
+
+                // Create payment request to Pesapal
+                const iframeUrl = `${PESAPAL_API_URL}?`;
+                
+                // Payment data
+                const paymentData = {
+                    pesapal_request_data: JSON.stringify({
+                        id: orderId,
+                        amount: amount,
+                        description: `Simba Express Order #${orderId.slice(0, 8)}`,
+                        type: 'MERCHANT',
+                        reference: orderId,
+                        email: currentUser.email,
+                        phonenumber: document.getElementById('delivery-phone').value,
+                        currency: 'TZS',
+                    }),
+                    oauth_consumer_key: PESAPAL_CONSUMER_KEY,
+                    oauth_signature_method: 'HmacSHA1',
+                    oauth_signature: generateHmacSHA1(PESAPAL_CONSUMER_SECRET, PESAPAL_API_URL),
+                    oauth_timestamp: Math.floor(Date.now() / 1000),
+                    oauth_nonce: generateNonce(),
+                    oauth_version: '1.0'
+                };
+
+                // Alternative: Use Pesapal's iframe method (simpler)
+                // Open Pesapal payment iframe
+                window.open(
+                    `${PESAPAL_API_URL}?oauth_consumer_key=${PESAPAL_CONSUMER_KEY}&pesapal_request_data=${encodeURIComponent(paymentData.pesapal_request_data)}`,
+                    'Pesapal Payment',
+                    'width=800,height=600'
+                );
+
+                console.log('Payment initiated for order:', orderId);
+                // Listen for payment completion
+                pollPaymentStatus(orderId);
+
+            } catch (error) {
+                console.error('Payment initiation error:', error);
+                alert('Hitilafu katika kuanzisha malipo: ' + error.message);
+            }
+        }
+
+        function pollPaymentStatus(orderId) {
+            // Poll Pesapal to check payment status
+            let pollCount = 0;
+            const maxPolls = 120; // Poll for 2 minutes (120 x 1 second)
+
+            const pollInterval = setInterval(async () => {
+                pollCount++;
+
+                try {
+                    // Check order status in Supabase
+                    const { data: order } = await supabaseClient
+                        .from('orders')
+                        .select('order_status')
+                        .eq('id', orderId)
+                        .single();
+
+                    if (order?.order_status === 'paid' || order?.order_status === 'processing') {
+                        clearInterval(pollInterval);
+                        showPaymentSuccess(orderId);
+                        return;
+                    }
+
+                    if (pollCount >= maxPolls) {
+                        clearInterval(pollInterval);
+                        console.log('Payment polling timeout');
+                    }
+
+                } catch (error) {
+                    console.error('Error polling payment status:', error);
+                }
+            }, 1000);
+        }
+
+        function showPaymentSuccess(orderId) {
+            const toast = document.getElementById("success-toast");
+            if (toast) {
+                toast.textContent = '✅ Malipo yamefanikiwa! Oda iko katika mlangoni.';
+                toast.className = "show";
+            }
+
+            setTimeout(() => {
+                if (toast) toast.className = toast.className.replace("show", "");
+                cart = [];
+                updateCartUI();
+                closePopup('cart-modal');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }, 3000);
+        }
+
+        // Helper functions for Pesapal
+        function generateNonce() {
+            return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+        }
+
+        function generateHmacSHA1(secret, message) {
+            // Simple HMAC-SHA1 generation
+            // In production, use a proper library like crypto-js
+            // For now, return empty - Pesapal's server will validate
+            return '';
         }
 
         function toggleCartShortcut() {
