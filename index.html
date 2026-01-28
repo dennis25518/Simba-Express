@@ -131,8 +131,8 @@
                 <img src="/favicon/simba_croped2_cropped.png" alt="Logo" class="h-10 w-auto">
             </div>
             <div class="flex items-center">
-                <button id="user-icon-btn" onclick="toggleUserMenu()" class="hover:scale-110 transition-transform flex items-center justify-center w-11 h-11 rounded-full border-2 border-red-600" title="Akaunti Yako" style="color: #E60000; font-size: 24px;">
-                    👤
+                <button id="user-icon-btn" onclick="toggleUserMenu()" class="hover:scale-110 transition-transform flex items-center justify-center rounded-full border-2 border-red-600" title="Akaunti Yako">
+                    <div id="userInitials" class="w-11 h-11 rounded-full bg-red-600 border-2 border-red-700 flex items-center justify-center text-white font-bold text-sm">?</div>
                 </button>
             </div>
         </div>
@@ -855,6 +855,10 @@
         // Show login/register options
         function showLoginUI() {
             const menuContent = document.getElementById('user-menu-content');
+            const initialsDiv = document.getElementById('userInitials');
+            if (initialsDiv) {
+                initialsDiv.textContent = '?';
+            }
             menuContent.innerHTML = `
                 <div class="p-4 space-y-3">
                     <p class="text-xs text-gray-600 font-bold uppercase tracking-widest mb-4 text-center">Karibu</p>
@@ -872,6 +876,21 @@
         function updateUserUI() {
             const menuContent = document.getElementById('user-menu-content');
             const userEmail = currentUser?.email || 'User';
+            
+            // Extract initials from email or name
+            const nameOrEmail = currentUser?.profile?.fullname || currentUser?.profile?.name || currentUser?.email || 'User';
+            const initials = nameOrEmail
+                .split(' ')
+                .slice(0, 2)
+                .map(word => word[0].toUpperCase())
+                .join('')
+                .substring(0, 2);
+            
+            // Update initials in header button
+            const initialsDiv = document.getElementById('userInitials');
+            if (initialsDiv) {
+                initialsDiv.textContent = initials || '?';
+            }
             
             menuContent.innerHTML = `
                 <div class="p-4 space-y-3">
