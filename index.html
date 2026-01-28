@@ -1710,7 +1710,8 @@ function collapseSection(key) {
                         payment_method: paymentMethod,
                         order_status: 'awaiting_payment',
                         created_at: new Date(),
-                    }]);
+                    }])
+                    .select();
 
                 if (orderError) {
                     console.error('Order creation error:', orderError);
