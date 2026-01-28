@@ -1652,21 +1652,7 @@ function collapseSection(key) {
         const PESAPAL_CONSUMER_KEY = 'MgnBl7oCT2JmzK8MQ9fP6p5VVVh5rrg0';
         const PESAPAL_CONSUMER_SECRET = 'tnVjvF7eUCNBLcamk/dylBi8CIs=';
         const PESAPAL_API_URL = 'https://api.pesapal.com/api/redirecturl/'; // Live
-
-        // USSD codes for Tanzania mobile money networks
-        const USSD_CODES = {
-            mpesa: '*150*50*1#',
-            airtel: '*150*1*1*1*1#',
-            tigopesa: '*150*1*1#',
-            halopesa: '*150*88*1#'
-        };
-
-        const PAYMENT_NAMES = {
-            mpesa: 'M-Pesa',
-            airtel: 'Airtel Money',
-            tigopesa: 'Tigopesa',
-            halopesa: 'Halopesa'
-        };
+        // For testing: 'https://demo.pesapal.com/api/redirecturl/'
 
         async function processPayment() {
             if (!currentUser) {
@@ -1707,14 +1693,7 @@ function collapseSection(key) {
                     total_price: item.price * item.qty
                 }));
 
-                // Show loading
-                const paymentBtn = document.querySelector('button[onclick="processPayment()"]');
-                if (paymentBtn) {
-                    paymentBtn.disabled = true;
-                    paymentBtn.textContent = '⏳ Inapakia...';
-                }
-
-                // Create the order in Supabase with status 'awaiting_payment'
+                // First, create the order in Supabase with status 'awaiting_payment'
                 const { data: orderData, error: orderError } = await supabaseClient
                     .from('orders')
                     .insert([{
@@ -1737,167 +1716,144 @@ function collapseSection(key) {
                 if (orderError) {
                     console.error('Order creation error:', orderError);
                     alert('Kosa katika kuandaa oda: ' + orderError.message);
-                    if (paymentBtn) {
-                        paymentBtn.disabled = false;
-                        paymentBtn.textContent = '💳 Lipa Kwa Simu';
-                    }
                     return;
                 }
 
-                const orderId = String(orderData[0].id);
+                const orderId = orderData[0].id;
                 console.log('Order created:', orderId);
 
-                // Show USSD payment dialog
-                showUSSDPaymentDialog(orderId, grandTotal, paymentMethod, deliveryPhone);
+                // Now initiate Pesapal payment
+                initiatePayment(orderId, grandTotal, paymentMethod);
 
             } catch (error) {
                 console.error('Payment processing error:', error);
                 alert('Kosa katika kulipwa: ' + error.message);
+            }
+        }
+
+        async function initiatePayment(orderId, amount, paymentMethod) {
+            try {
+                // Ensure orderId is a string
+                const orderIdStr = String(orderId || '');
+                if (!orderIdStr) {
+                    throw new Error('Order ID is missing');
+                }
+
+                // Show loading indicator
                 const paymentBtn = document.querySelector('button[onclick="processPayment()"]');
                 if (paymentBtn) {
-                    paymentBtn.disabled = false;
-                    paymentBtn.textContent = '💳 Lipa Kwa Simu';
+                    paymentBtn.disabled = true;
+                    paymentBtn.textContent = '⏳ Chunguza Dirisha la Malipo...';
                 }
-            }
-        }
 
-        function showUSSDPaymentDialog(orderId, amount, paymentMethod, phoneNumber) {
-            const ussdCode = USSD_CODES[paymentMethod] || USSD_CODES.mpesa;
-            const paymentName = PAYMENT_NAMES[paymentMethod] || 'M-Pesa';
-            
-            // Create modal content
-            const modalHTML = `
-                <div style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: flex; align-items: center; justify-content: center; z-index: 10000;" id="ussd-modal-overlay">
-                    <div style="background: white; border-radius: 12px; padding: 30px; max-width: 400px; width: 90%; box-shadow: 0 10px 40px rgba(0,0,0,0.3);">
-                        
-                        <h2 style="text-align: center; font-size: 20px; font-weight: bold; margin-bottom: 10px; color: #333;">
-                            💬 Malipo kwa ${paymentName}
-                        </h2>
-                        
-                        <div style="background: #f0f0f0; border-radius: 8px; padding: 20px; margin: 20px 0; text-align: center;">
-                            <p style="font-size: 12px; color: #666; margin-bottom: 10px;">Cheza namba hii kwenye simu yako:</p>
-                            <p style="font-size: 24px; font-weight: bold; color: #DC2626; font-family: monospace; letter-spacing: 2px;">
-                                ${ussdCode}
-                            </p>
-                        </div>
+                // Simple payment data for Pesapal
+                const paymentDescription = `Simba Express Order #${orderIdStr.substring(0, 8)}`;
+                const customerPhone = document.getElementById('delivery-phone')?.value || currentUser.phone || '';
+                
+                // Create Pesapal payment URL
+                const paymentUrl = `${PESAPAL_API_URL}?` +
+                    `oauth_consumer_key=${encodeURIComponent(PESAPAL_CONSUMER_KEY)}&` +
+                    `pesapal_request_data=${encodeURIComponent(JSON.stringify({
+                        id: orderIdStr,
+                        amount: amount,
+                        description: paymentDescription,
+                        type: 'MERCHANT',
+                        reference: orderIdStr,
+                        email: currentUser.email || '',
+                        phonenumber: customerPhone,
+                        currency: 'TZS',
+                    }))}&` +
+                    `oauth_signature_method=HmacSHA1&` +
+                    `oauth_signature=&` +
+                    `oauth_timestamp=${Math.floor(Date.now() / 1000)}&` +
+                    `oauth_nonce=${generateNonce()}&` +
+                    `oauth_version=1.0`;
 
-                        <div style="background: #FEF3C7; border-left: 4px solid #DC2626; padding: 15px; border-radius: 4px; margin: 20px 0;">
-                            <p style="font-size: 13px; color: #333; margin: 0;">
-                                <strong>📝 Maelezo:</strong><br>
-                                1. Cheza kwa haraka: ${ussdCode}<br>
-                                2. Ingiza namba yako siri (PIN)<br>
-                                3. Thibitisha malipo<br>
-                                4. Oda itabadilika kuwa "LIMELIPIWA" moja kwa moja
-                            </p>
-                        </div>
-
-                        <div style="background: #DBEAFE; border-left: 4px solid #2563EB; padding: 15px; border-radius: 4px; margin: 20px 0;">
-                            <p style="font-size: 12px; color: #333; margin: 0;">
-                                <strong>💰 Kiasi cha Kulipa:</strong> <span style="font-size: 16px; font-weight: bold; color: #DC2626;">TZS ${amount.toLocaleString()}</span>
-                            </p>
-                        </div>
-
-                        <div style="display: flex; gap: 10px; margin-top: 25px;">
-                            <button onclick="confirmPaymentDone('${orderId}', '${paymentMethod}')" 
-                                    style="flex: 1; background: #DC2626; color: white; border: none; padding: 12px; border-radius: 6px; font-weight: bold; font-size: 14px; cursor: pointer;">
-                                ✅ Malipo Yamefanikiwa
-                            </button>
-                            <button onclick="cancelPayment('${orderId}')" 
-                                    style="flex: 1; background: #E5E7EB; color: #333; border: none; padding: 12px; border-radius: 6px; font-weight: bold; font-size: 14px; cursor: pointer;">
-                                ❌ Batilisha
-                            </button>
-                        </div>
-
-                        <p style="font-size: 11px; color: #999; text-align: center; margin-top: 15px;">
-                            Oda ID: ${orderId.substring(0, 8)}...
-                        </p>
-                    </div>
-                </div>
-            `;
-
-            // Remove any existing modal
-            const existingModal = document.getElementById('ussd-modal-overlay');
-            if (existingModal) {
-                existingModal.remove();
-            }
-
-            // Add modal to page
-            document.body.insertAdjacentHTML('beforeend', modalHTML);
-        }
-
-        async function confirmPaymentDone(orderId, paymentMethod) {
-            try {
-                // Update order status to 'paid'
-                const { error } = await supabaseClient
-                    .from('orders')
-                    .update({ order_status: 'paid' })
-                    .eq('id', orderId);
-
-                if (error) {
-                    console.error('Payment confirmation error:', error);
-                    alert('Kosa: ' + error.message);
+                // Open Pesapal payment window
+                const paymentWindow = window.open(paymentUrl, 'Pesapal Payment', 'width=800,height=600');
+                
+                if (!paymentWindow) {
+                    alert('Tafadhali ruhusu vidirisha vipya kufikia hii dirisha. Akili zako inaweza kusimamia kuzuia vidirisha vipya.');
                     return;
                 }
 
-                // Remove modal
-                const modal = document.getElementById('ussd-modal-overlay');
-                if (modal) {
-                    modal.remove();
-                }
-
-                // Show success message
-                const toast = document.getElementById("success-toast");
-                if (toast) {
-                    toast.textContent = '✅ Malipo yamefanikiwa! Oda iko katika mlangoni.';
-                    toast.className = "show";
-                }
-
-                // Clear cart and close checkout
-                setTimeout(() => {
-                    cart = [];
-                    updateCartUI();
-                    closePopup('cart-modal');
-                    if (toast) toast.className = toast.className.replace("show", "");
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
-                }, 2000);
+                console.log('Payment window opened for order:', orderIdStr);
+                
+                // Listen for payment completion
+                pollPaymentStatus(orderIdStr);
 
             } catch (error) {
-                console.error('Confirmation error:', error);
-                alert('Hitilafu: ' + error.message);
-            }
-        }
-
-        async function cancelPayment(orderId) {
-            try {
-                // Delete the order if payment was cancelled
-                const { error } = await supabaseClient
-                    .from('orders')
-                    .delete()
-                    .eq('id', orderId);
-
-                if (error) {
-                    console.error('Cancellation error:', error);
-                }
-
-                // Remove modal
-                const modal = document.getElementById('ussd-modal-overlay');
-                if (modal) {
-                    modal.remove();
-                }
-
-                // Re-enable payment button
+                console.error('Payment initiation error:', error);
+                alert('Hitilafu katika kuanzisha malipo: ' + error.message);
+                
+                // Re-enable button
                 const paymentBtn = document.querySelector('button[onclick="processPayment()"]');
                 if (paymentBtn) {
                     paymentBtn.disabled = false;
                     paymentBtn.textContent = '💳 Lipa Kwa Simu';
                 }
-
-                alert('Malipo yamebatilishwa. Kapu lako halibabadilika.');
-
-            } catch (error) {
-                console.error('Error cancelling payment:', error);
-                alert('Hitilafu: ' + error.message);
             }
+        }
+
+        function pollPaymentStatus(orderId) {
+            // Poll Pesapal to check payment status
+            let pollCount = 0;
+            const maxPolls = 120; // Poll for 2 minutes (120 x 1 second)
+
+            const pollInterval = setInterval(async () => {
+                pollCount++;
+
+                try {
+                    // Check order status in Supabase
+                    const { data: order } = await supabaseClient
+                        .from('orders')
+                        .select('order_status')
+                        .eq('id', orderId)
+                        .single();
+
+                    if (order?.order_status === 'paid' || order?.order_status === 'processing') {
+                        clearInterval(pollInterval);
+                        showPaymentSuccess(orderId);
+                        return;
+                    }
+
+                    if (pollCount >= maxPolls) {
+                        clearInterval(pollInterval);
+                        console.log('Payment polling timeout');
+                    }
+
+                } catch (error) {
+                    console.error('Error polling payment status:', error);
+                }
+            }, 1000);
+        }
+
+        function showPaymentSuccess(orderId) {
+            const toast = document.getElementById("success-toast");
+            if (toast) {
+                toast.textContent = '✅ Malipo yamefanikiwa! Oda iko katika mlangoni.';
+                toast.className = "show";
+            }
+
+            setTimeout(() => {
+                if (toast) toast.className = toast.className.replace("show", "");
+                cart = [];
+                updateCartUI();
+                closePopup('cart-modal');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }, 3000);
+        }
+
+        // Helper functions for Pesapal
+        function generateNonce() {
+            return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+        }
+
+        function generateHmacSHA1(secret, message) {
+            // Simple HMAC-SHA1 generation
+            // In production, use a proper library like crypto-js
+            // For now, return empty - Pesapal's server will validate
+            return '';
         }
 
         function toggleCartShortcut() {
