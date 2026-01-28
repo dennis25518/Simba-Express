@@ -444,7 +444,7 @@
     <div class="profile-header">
         <div class="max-w-4xl mx-auto text-center">
             <div class="profile-picture-container">
-                <img id="profile-picture" src="/favicon/favicon-pro.jpeg" alt="Profile Picture" class="profile-picture">
+                <img id="profile-picture" src="" alt="Profile Picture" class="profile-picture" onerror="this.src='/favicon/favicon-pro.jpeg'">
                 <button class="edit-picture-btn" onclick="document.getElementById('picture-input').click()" title="Change Picture">📸</button>
                 <input type="file" id="picture-input" accept="image/*" onchange="uploadProfilePicture(event)">
             </div>
@@ -693,14 +693,20 @@
                 currentProfile = data || {};
 
                 // Use fullname or name field (registration uses fullname)
-                const displayName = currentProfile.fullname || currentProfile.name || 'Simba Express User';
+                const displayName = currentProfile.fullname || currentProfile.name || currentUser.email || 'User';
 
-                // Update UI
+                // Update UI with actual user data
                 document.getElementById('profile-name').textContent = displayName;
                 document.getElementById('profile-email').textContent = currentUser.email || 'user@example.com';
 
+                // Set profile picture - use actual user photo if available
+                const profilePictureEl = document.getElementById('profile-picture');
                 if (currentProfile.profile_picture_url) {
-                    document.getElementById('profile-picture').src = currentProfile.profile_picture_url;
+                    profilePictureEl.src = currentProfile.profile_picture_url;
+                    profilePictureEl.onerror = function() { this.src = '/favicon/favicon-pro.jpeg'; };
+                } else {
+                    // Fallback to initials or default
+                    profilePictureEl.src = '/favicon/favicon-pro.jpeg';
                 }
 
                 // Fill information tab
