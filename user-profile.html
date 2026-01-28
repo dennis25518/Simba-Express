@@ -6,6 +6,7 @@
     <title>My Account | Simba Express</title>
     <link rel="icon" type="image/png" href="/favicon/favicon-pro.jpeg">
     <link rel="stylesheet" href="./dist/output.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         body { font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; scroll-behavior: smooth; }
         
@@ -638,10 +639,14 @@
         </div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
         // Supabase Configuration
         const SUPABASE_URL = 'https://cmsqvcqddnefquxzchxy.supabase.co';
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNtc3F2Y3FkZG5lZnF1eHpjaHh5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE2ODU1NDU0NDgsImV4cCI6MTk4NzI2NTQ0OH0.9a5h7s7_FBc-gU1Io1eP0K2Xf3d-P1q-Z2M5j7n9k1a';
+
+        const { createClient } = window.supabase;
+        const supabaseClient = createClient(SUPABASE_URL, SUPABASE_KEY);
 
         let currentUser = null;
         let currentProfile = null;
@@ -650,40 +655,45 @@
         window.addEventListener('DOMContentLoaded', initializePage);
 
         async function initializePage() {
-            // Check if user is logged in
-            const session = JSON.parse(localStorage.getItem('supabaseSession') || '{}');
-            
-            if (!session.user) {
-                window.location.href = 'index.html';
-                return;
-            }
+            try {
+                // Get user session from Supabase Auth
+                const { data: { session }, error } = await supabaseClient.auth.getSession();
+                
+                if (error || !session) {
+                    console.log('No session found, redirecting to homepage');
+                    window.location.href = 'index.html';
+                    return;
+                }
 
-            currentUser = session.user;
-            await loadProfileData();
-            await loadOrderHistory();
+                currentUser = session.user;
+                console.log('User authenticated:', currentUser.email);
+                
+                await loadProfileData();
+                await loadOrderHistory();
+            } catch (error) {
+                console.error('Initialization error:', error);
+                window.location.href = 'index.html';
+            }
         }
 
         async function loadProfileData() {
             try {
-                // Get user profile from localStorage first
-                const userData = JSON.parse(localStorage.getItem('userData') || '{}');
-                
                 // Fetch from Supabase
-                const response = await fetch(
-                    `${SUPABASE_URL}/rest/v1/user_profiles?user_id=eq.${currentUser.id}`,
-                    {
-                        headers: {
-                            'apikey': SUPABASE_KEY,
-                            'Authorization': `Bearer ${SUPABASE_KEY}`,
-                        },
-                    }
-                );
+                const { data, error } = await supabaseClient
+                    .from('user_profiles')
+                    .select('*')
+                    .eq('user_id', currentUser.id)
+                    .single();
 
-                const data = await response.json();
-                currentProfile = data[0] || {};
+                if (error && error.code !== 'PGRST116') {
+                    console.error('Error loading profile:', error);
+                    throw error;
+                }
+
+                currentProfile = data || {};
 
                 // Update UI
-                document.getElementById('profile-name').textContent = currentProfile.name || userData.name || 'Simba Express User';
+                document.getElementById('profile-name').textContent = currentProfile.name || 'Simba Express User';
                 document.getElementById('profile-email').textContent = currentUser.email || 'user@example.com';
 
                 if (currentProfile.profile_picture_url) {
@@ -715,19 +725,18 @@
 
         async function loadOrderHistory() {
             try {
-                const response = await fetch(
-                    `${SUPABASE_URL}/rest/v1/orders?user_id=eq.${currentUser.id}&order=created_at.desc`,
-                    {
-                        headers: {
-                            'apikey': SUPABASE_KEY,
-                            'Authorization': `Bearer ${SUPABASE_KEY}`,
-                        },
-                    }
-                );
+                const { data: orders, error } = await supabaseClient
+                    .from('orders')
+                    .select('*')
+                    .eq('user_id', currentUser.id)
+                    .order('created_at', { ascending: false });
 
-                const orders = await response.json();
+                if (error) {
+                    console.error('Error loading orders:', error);
+                    throw error;
+                }
 
-                if (orders.length === 0) {
+                if (!orders || orders.length === 0) {
                     document.getElementById('loading-orders').style.display = 'none';
                     document.getElementById('empty-orders').style.display = 'block';
                     return;
@@ -740,8 +749,16 @@
                 ordersList.innerHTML = '';
 
                 for (const order of orders) {
-                    const statusClass = `status-${order.order_status || 'pending'}`.toLowerCase();
+                    const statusClass = `status-${(order.order_status || 'pending')}`.toLowerCase();
                     const createdDate = new Date(order.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+
+                    // Parse items if stored as JSON string
+                    let items = [];
+                    try {
+                        items = typeof order.items === 'string' ? JSON.parse(order.items) : (order.items || []);
+                    } catch (e) {
+                        console.warn('Could not parse items for order:', order.id);
+                    }
 
                     const orderHTML = `
                         <div class="order-card">
@@ -755,18 +772,18 @@
 
                             <div class="order-items">
                                 <div class="text-sm font-bold text-gray-700 mb-1">Items:</div>
-                                ${order.items && order.items.length > 0 ? order.items.map(item => `
+                                ${items && items.length > 0 ? items.map(item => `
                                     <div class="order-item">
-                                        <span class="order-item-name">${item.product_name}</span>
-                                        <span class="order-item-qty">x${item.quantity}</span>
-                                        <span class="order-item-price">TZS ${(item.price * item.quantity).toLocaleString()}</span>
+                                        <span class="order-item-name">${item.product_name || 'Product'}</span>
+                                        <span class="order-item-qty">x${item.quantity || 1}</span>
+                                        <span class="order-item-price">TZS ${((item.price || 0) * (item.quantity || 1)).toLocaleString()}</span>
                                     </div>
                                 `).join('') : '<p class="text-gray-500 text-sm">No items recorded</p>'}
                             </div>
 
                             <div class="order-total">
                                 <span>Total Amount:</span>
-                                <span>TZS ${order.total_amount ? order.total_amount.toLocaleString() : '0'}</span>
+                                <span>TZS ${(order.total_amount || 0).toLocaleString()}</span>
                             </div>
 
                             <div class="order-meta">
@@ -831,41 +848,34 @@
             const bio = document.getElementById('edit-bio').value;
 
             try {
-                const response = await fetch(
-                    `${SUPABASE_URL}/rest/v1/user_profiles?user_id=eq.${currentUser.id}`,
-                    {
-                        method: 'PATCH',
-                        headers: {
-                            'apikey': SUPABASE_KEY,
-                            'Authorization': `Bearer ${SUPABASE_KEY}`,
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({
-                            name,
-                            phone,
-                            location,
-                            bio,
-                        }),
-                    }
-                );
+                const { data, error } = await supabaseClient
+                    .from('user_profiles')
+                    .update({
+                        name,
+                        phone,
+                        location,
+                        bio,
+                    })
+                    .eq('user_id', currentUser.id)
+                    .select();
 
-                if (response.ok) {
-                    // Update local display
-                    document.getElementById('display-name').textContent = name;
-                    document.getElementById('display-phone').textContent = phone || '-';
-                    document.getElementById('display-location').textContent = location || '-';
-                    document.getElementById('display-bio').textContent = bio || '-';
-                    document.getElementById('profile-name').textContent = name;
-
-                    // Show success message
-                    const successMsg = document.getElementById('edit-success');
-                    successMsg.textContent = '✅ Profile updated successfully!';
-                    successMsg.classList.add('show');
-
-                    setTimeout(() => closeEditModal(), 1500);
-                } else {
-                    throw new Error('Failed to update profile');
+                if (error) {
+                    throw error;
                 }
+
+                // Update local display
+                document.getElementById('display-name').textContent = name;
+                document.getElementById('display-phone').textContent = phone || '-';
+                document.getElementById('display-location').textContent = location || '-';
+                document.getElementById('display-bio').textContent = bio || '-';
+                document.getElementById('profile-name').textContent = name;
+
+                // Show success message
+                const successMsg = document.getElementById('edit-success');
+                successMsg.textContent = '✅ Profile updated successfully!';
+                successMsg.classList.add('show');
+
+                setTimeout(() => closeEditModal(), 1500);
             } catch (error) {
                 const errorMsg = document.getElementById('edit-error');
                 errorMsg.textContent = '❌ Error updating profile: ' + error.message;
@@ -930,9 +940,9 @@
         }
 
         function logoutFromProfile() {
-            localStorage.removeItem('supabaseSession');
-            localStorage.removeItem('userData');
-            window.location.href = 'index.html';
+            supabaseClient.auth.signOut().then(() => {
+                window.location.href = 'index.html';
+            });
         }
     </script>
 </body>
