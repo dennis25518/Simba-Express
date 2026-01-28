@@ -664,8 +664,12 @@
 
         async function initializePage() {
             try {
+                console.log('Initializing profile page...');
+                
                 // Get user session from Supabase Auth
                 const { data: { session }, error } = await supabaseClient.auth.getSession();
+                
+                console.log('Session check:', { session, error });
                 
                 if (error || !session) {
                     console.log('No session found, redirecting to homepage');
@@ -674,18 +678,26 @@
                 }
 
                 currentUser = session.user;
-                console.log('User authenticated:', currentUser.email);
+                console.log('User authenticated:', currentUser.email, 'ID:', currentUser.id);
                 
                 await loadProfileData();
                 await loadOrderHistory();
             } catch (error) {
                 console.error('Initialization error:', error);
-                window.location.href = 'index.html';
+                document.body.innerHTML = `<div style="padding: 2rem; text-align: center;">
+                    <h1 style="color: red;">Error Loading Profile</h1>
+                    <p>${error.message}</p>
+                    <p>Check the browser console (F12) for details</p>
+                    <a href="index.html" style="color: blue; text-decoration: underline;">Return to Home</a>
+                </div>`;
             }
         }
 
         async function loadProfileData() {
             try {
+                console.log('Starting loadProfileData...');
+                console.log('Current User:', currentUser);
+
                 // Fetch from Supabase
                 const { data, error } = await supabaseClient
                     .from('user_profiles')
@@ -693,15 +705,19 @@
                     .eq('user_id', currentUser.id)
                     .maybeSingle();
 
+                console.log('Supabase Response:', { data, error });
+
                 if (error) {
                     console.error('Error loading profile:', error);
                     // Continue without profile - might not exist yet
                 }
 
                 currentProfile = data || {};
+                console.log('Current Profile Object:', currentProfile);
 
                 // Use fullname or name field (registration uses fullname)
                 const displayName = currentProfile.fullname || currentProfile.name || currentUser.email || 'User';
+                console.log('Display Name:', displayName);
 
                 // Update UI with actual user data
                 document.getElementById('profile-name').textContent = displayName;
@@ -710,10 +726,14 @@
                 // Set profile picture - use actual user photo if available
                 const profilePictureEl = document.getElementById('profile-picture');
                 if (currentProfile.profile_picture_url) {
+                    console.log('Loading profile picture:', currentProfile.profile_picture_url);
                     profilePictureEl.src = currentProfile.profile_picture_url;
-                    profilePictureEl.onerror = function() { this.src = '/favicon/favicon-pro.jpeg'; };
+                    profilePictureEl.onerror = function() { 
+                        console.log('Profile picture failed to load, using fallback');
+                        this.src = '/favicon/favicon-pro.jpeg'; 
+                    };
                 } else {
-                    // Fallback to initials or default
+                    console.log('No profile picture URL, using default');
                     profilePictureEl.src = '/favicon/favicon-pro.jpeg';
                 }
 
@@ -727,32 +747,20 @@
                 document.getElementById('display-bio').textContent = currentProfile.bio || '-';
                 document.getElementById('display-joined').textContent = new Date(currentUser.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
 
-                // Log the entire profile object for debugging
-                console.log('User Profile Data from Database:', {
-                    name: displayName,
-                    email: currentProfile.email || currentUser.email,
-                    phone: currentProfile.phone,
-                    location: currentProfile.location,
-                    latitude: currentProfile.latitude,
-                    longitude: currentProfile.longitude,
-                    bio: currentProfile.bio,
-                    profile_picture_url: currentProfile.profile_picture_url,
-                    created_at: currentUser.created_at,
-                    ...currentProfile
-                });
-
                 // Fill edit form
                 document.getElementById('edit-name').value = displayName;
                 document.getElementById('edit-phone').value = currentProfile.phone || '';
                 document.getElementById('edit-location').value = currentProfile.location || '';
                 document.getElementById('edit-bio').value = currentProfile.bio || '';
 
+                console.log('Profile data loaded successfully!');
                 document.getElementById('loading-info').style.display = 'none';
                 document.getElementById('info-content').style.display = 'block';
 
             } catch (error) {
                 console.error('Error loading profile:', error);
-                document.getElementById('loading-info').innerHTML = '<p class="text-red-600">Error loading profile. Please refresh the page.</p>';
+                const errorMsg = `<p class="text-red-600"><strong>Error:</strong> ${error.message}</p><p class="text-gray-600 text-sm mt-2">Check browser console (F12) for details</p>`;
+                document.getElementById('loading-info').innerHTML = errorMsg;
             }
         }
 
