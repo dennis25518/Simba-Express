@@ -4,7 +4,7 @@
  * Purpose: Get Bearer token for Pesapal API requests
  */
 
-export default async function handler(req, res) {
+module.exports = async function handler(req, res) {
     // Only allow GET requests
     if (req.method !== 'GET') {
         return res.status(405).json({ error: 'Method not allowed' });
@@ -56,4 +56,4 @@ export default async function handler(req, res) {
         console.error('Authentication error:', error);
         return res.status(500).json({ error: error.message });
     }
-}
+};
