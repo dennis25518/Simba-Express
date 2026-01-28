@@ -1734,9 +1734,11 @@ function collapseSection(key) {
         async function initiatePayment(orderId, amount, paymentMethod) {
             try {
                 // Show loading indicator
-                const btn = event.target;
-                btn.disabled = true;
-                btn.textContent = '⏳ Chunguza Dirisha la Malipo...';
+                const paymentBtn = document.querySelector('button[onclick="processPayment()"]');
+                if (paymentBtn) {
+                    paymentBtn.disabled = true;
+                    paymentBtn.textContent = '⏳ Chunguza Dirisha la Malipo...';
+                }
 
                 // Create payment request to Pesapal
                 const iframeUrl = `${PESAPAL_API_URL}?`;
