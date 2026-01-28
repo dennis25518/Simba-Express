@@ -122,10 +122,6 @@
         }
   
     </style>
-    
-    <!-- Pesapal Payment Gateway SDK -->
-    <script src="https://www.pesapal.com/api/os-sdk.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
 </head>
 <body class="bg-white text-gray-900">
 
@@ -1648,11 +1644,9 @@ function collapseSection(key) {
         // PESAPAL PAYMENT GATEWAY INTEGRATION
         // ============================================
 
-        // Initialize Pesapal credentials
-        const PESAPAL_CONSUMER_KEY = 'MgnBl7oCT2JmzK8MQ9fP6p5VVVh5rrg0';
-        const PESAPAL_CONSUMER_SECRET = 'tnVjvF7eUCNBLcamk/dylBi8CIs=';
-        const PESAPAL_API_URL = 'https://api.pesapal.com/api/redirecturl/'; // Live
-        // For testing: 'https://demo.pesapal.com/api/redirecturl/'
+        // ============================================
+        // PESAPAL V3 PAYMENT GATEWAY (SECURE BACKEND)
+        // ============================================
 
         async function processPayment() {
             if (!currentUser) {
@@ -1680,6 +1674,13 @@ function collapseSection(key) {
             const paymentMethod = document.querySelector('input[name="payment-method"]:checked')?.value || 'mpesa';
 
             try {
+                // Show loading indicator
+                const paymentBtn = document.querySelector('button[onclick="processPayment()"]');
+                if (paymentBtn) {
+                    paymentBtn.disabled = true;
+                    paymentBtn.textContent = '⏳ Chunguza Dirisha la Malipo...';
+                }
+
                 const subtotal = cart.reduce((s, i) => s + (i.price * i.qty), 0);
                 const deliveryFee = 5000;
                 const grandTotal = subtotal + deliveryFee;
@@ -1693,7 +1694,7 @@ function collapseSection(key) {
                     total_price: item.price * item.qty
                 }));
 
-                // First, create the order in Supabase with status 'awaiting_payment'
+                // Step 1: Create the order in Supabase with status 'awaiting_payment'
                 const { data: orderData, error: orderError } = await supabaseClient
                     .from('orders')
                     .insert([{
@@ -1716,75 +1717,61 @@ function collapseSection(key) {
                 if (orderError) {
                     console.error('Order creation error:', orderError);
                     alert('Kosa katika kuandaa oda: ' + orderError.message);
+                    if (paymentBtn) {
+                        paymentBtn.disabled = false;
+                        paymentBtn.textContent = '💳 Lipa Kwa Simu';
+                    }
                     return;
                 }
 
                 const orderId = orderData[0].id;
-                console.log('Order created:', orderId);
+                console.log('[Payment] Order created:', orderId);
 
-                // Now initiate Pesapal payment
-                initiatePayment(orderId, grandTotal, paymentMethod);
+                // Step 2: Call backend API to submit order to Pesapal
+                const submitResponse = await fetch('/api/pesapal/submit-order', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        orderId: orderId,
+                        amount: grandTotal,
+                        email: currentUser.email,
+                        phone: deliveryPhone,
+                        paymentMethod: paymentMethod,
+                    }),
+                });
+
+                const submitData = await submitResponse.json();
+
+                if (!submitData.success || !submitData.checkoutUrl) {
+                    console.error('Pesapal submission error:', submitData);
+                    alert('Kosa katika kuandaa malipo: ' + (submitData.error || 'Unknown error'));
+                    if (paymentBtn) {
+                        paymentBtn.disabled = false;
+                        paymentBtn.textContent = '💳 Lipa Kwa Simu';
+                    }
+                    return;
+                }
+
+                console.log('[Payment] Order submitted to Pesapal:', submitData.orderTrackingId);
+
+                // Step 3: Save checkout URL for redirect
+                localStorage.setItem('lastOrderId', orderId);
+                localStorage.setItem('lastOrderTotal', grandTotal);
+
+                // Step 4: Start polling for payment confirmation
+                pollPaymentStatus(orderId);
+
+                // Step 5: Redirect user to Pesapal checkout
+                // Use small delay to ensure polling starts first
+                setTimeout(() => {
+                    window.location.href = submitData.checkoutUrl;
+                }, 500);
 
             } catch (error) {
                 console.error('Payment processing error:', error);
                 alert('Kosa katika kulipwa: ' + error.message);
-            }
-        }
-
-        async function initiatePayment(orderId, amount, paymentMethod) {
-            try {
-                // Ensure orderId is a string
-                const orderIdStr = String(orderId || '');
-                if (!orderIdStr) {
-                    throw new Error('Order ID is missing');
-                }
-
-                // Show loading indicator
-                const paymentBtn = document.querySelector('button[onclick="processPayment()"]');
-                if (paymentBtn) {
-                    paymentBtn.disabled = true;
-                    paymentBtn.textContent = '⏳ Chunguza Dirisha la Malipo...';
-                }
-
-                // Simple payment data for Pesapal
-                const paymentDescription = `Simba Express Order #${orderIdStr.substring(0, 8)}`;
-                const customerPhone = document.getElementById('delivery-phone')?.value || currentUser.phone || '';
-                
-                // Create Pesapal payment URL
-                const paymentUrl = `${PESAPAL_API_URL}?` +
-                    `oauth_consumer_key=${encodeURIComponent(PESAPAL_CONSUMER_KEY)}&` +
-                    `pesapal_request_data=${encodeURIComponent(JSON.stringify({
-                        id: orderIdStr,
-                        amount: amount,
-                        description: paymentDescription,
-                        type: 'MERCHANT',
-                        reference: orderIdStr,
-                        email: currentUser.email || '',
-                        phonenumber: customerPhone,
-                        currency: 'TZS',
-                    }))}&` +
-                    `oauth_signature_method=HmacSHA1&` +
-                    `oauth_signature=&` +
-                    `oauth_timestamp=${Math.floor(Date.now() / 1000)}&` +
-                    `oauth_nonce=${generateNonce()}&` +
-                    `oauth_version=1.0`;
-
-                // Open Pesapal payment window
-                const paymentWindow = window.open(paymentUrl, 'Pesapal Payment', 'width=800,height=600');
-                
-                if (!paymentWindow) {
-                    alert('Tafadhali ruhusu vidirisha vipya kufikia hii dirisha. Akili zako inaweza kusimamia kuzuia vidirisha vipya.');
-                    return;
-                }
-
-                console.log('Payment window opened for order:', orderIdStr);
-                
-                // Listen for payment completion
-                pollPaymentStatus(orderIdStr);
-
-            } catch (error) {
-                console.error('Payment initiation error:', error);
-                alert('Hitilafu katika kuanzisha malipo: ' + error.message);
                 
                 // Re-enable button
                 const paymentBtn = document.querySelector('button[onclick="processPayment()"]');
@@ -1796,9 +1783,13 @@ function collapseSection(key) {
         }
 
         function pollPaymentStatus(orderId) {
-            // Poll Pesapal to check payment status
+            /**
+             * Poll for payment confirmation
+             * This is fallback - IPN webhook is authoritative
+             * Polls for 2 minutes then gives up
+             */
             let pollCount = 0;
-            const maxPolls = 120; // Poll for 2 minutes (120 x 1 second)
+            const maxPolls = 120; // 2 minutes at 1-second intervals
 
             const pollInterval = setInterval(async () => {
                 pollCount++;
@@ -1811,15 +1802,16 @@ function collapseSection(key) {
                         .eq('id', orderId)
                         .single();
 
-                    if (order?.order_status === 'paid' || order?.order_status === 'processing') {
+                    if (order?.order_status === 'paid') {
                         clearInterval(pollInterval);
+                        console.log('[Payment] Order marked as PAID');
                         showPaymentSuccess(orderId);
                         return;
                     }
 
                     if (pollCount >= maxPolls) {
                         clearInterval(pollInterval);
-                        console.log('Payment polling timeout');
+                        console.log('[Payment] Polling timeout - IPN will confirm payment');
                     }
 
                 } catch (error) {
@@ -1842,18 +1834,6 @@ function collapseSection(key) {
                 closePopup('cart-modal');
                 window.scrollTo({ top: 0, behavior: 'smooth' });
             }, 3000);
-        }
-
-        // Helper functions for Pesapal
-        function generateNonce() {
-            return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
-        }
-
-        function generateHmacSHA1(secret, message) {
-            // Simple HMAC-SHA1 generation
-            // In production, use a proper library like crypto-js
-            // For now, return empty - Pesapal's server will validate
-            return '';
         }
 
         function toggleCartShortcut() {
